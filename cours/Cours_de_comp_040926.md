@@ -154,3 +154,5 @@ int check(int type) {
 
 void accept(int type);
 ```
+
+Ici, dans notre cas, `int type`  sera `ValidToken type`
