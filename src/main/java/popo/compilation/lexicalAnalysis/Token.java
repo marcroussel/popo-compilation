@@ -1,7 +1,7 @@
 package popo.compilation.lexicalAnalysis;
 
 public class Token {
-    int type;
+    ValidTokens type;
     int valeur;
     String ident; // Pour stocker le nom de la variable (si on détecte une variable)
     int line;
@@ -12,7 +12,7 @@ public class Token {
      * @param valeur
      * @param line
      */
-    public Token(int type, int valeur, int line) {
+    public Token(ValidTokens type, int valeur, int line) {
         this.type = type;
         this.valeur = valeur;
         this.ident = null;
@@ -26,7 +26,7 @@ public class Token {
      * @param ident
      * @param line
      */
-    public Token(int type, int valeur, String ident, int line) {
+    public Token(ValidTokens type, int valeur, String ident, int line) {
         this.type = type;
         this.valeur = valeur;
         this.ident = ident;
