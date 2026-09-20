@@ -10,8 +10,9 @@ public class LexicalAnalysis {
     private Token lastToken;
 
     // Position de lecture dans le flux source et ligne courante
-    private int pos = 0;
+    private int charPos = 0;
     private int line = 1;
+
 
     public LexicalAnalysis(String source) {
         this.source = source;
@@ -56,10 +57,10 @@ public class LexicalAnalysis {
      * Renvoie '\0' si on est à la fin du flux.
      */
     private char peekNextChar() {
-        if (pos >= source.length()) {
+        if (charPos >= source.length()) {
             return '\0';
         }
-        return source.charAt(pos);
+        return source.charAt(charPos);
     }
 
     /**
@@ -67,8 +68,8 @@ public class LexicalAnalysis {
      * Met à jour le compteur de ligne si on passe un retour à la ligne.
      */
     private char advanceChar() {
-        char c = source.charAt(pos);
-        pos++;
+        char c = source.charAt(charPos);
+        charPos++;
 
         // Si retour à la ligne détectée → nouvelle ligne
         if (c == '\n') {
@@ -86,23 +87,32 @@ public class LexicalAnalysis {
         setLastToken(getCurrentToken());
 
         // On ignore les espaces, tabulations et retours à la ligne
-        while (pos < source.length() && Character.isWhitespace(peekNextChar())) {
+        while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
+            System.out.println("Renault Espace de Carlos Ghosn");
             advanceChar();
         }
 
-        // Fin du flux source
-        if (pos >= source.length()) {
+        // Si fin du flux source détecté,
+        // On arrête cette fonction
+        if (charPos >= source.length()) {
             setCurrentToken(new Token(ValidTokens.EOS, 0, line));
             return;
         }
 
-        char c = advanceChar();
+        // Construction du token jusqu'à trouver un espace
+        StringBuilder tokenBuilder = new StringBuilder();
+        do {
+            tokenBuilder.append(advanceChar());
+        } while (charPos < source.length() && !Character.isWhitespace(peekNextChar()));
+        String token = tokenBuilder.toString();
 
-        System.out.println("Pos:" + this.pos + " Line:" + this.line);
-        System.out.println("Character found: " + c);
-        System.out.println("Next character found: " + peekNextChar());
+        System.out.println("Pos:" + this.charPos + " Line:" + this.line);
+        System.out.println("Token found: " + token);
 
-        // TODO: switch (c) { ... } pour déterminer le type de token
+        // TODO : Vérifier dans la boucle While que le caractère suivant
+        //  n'est pas un caractère spécial reconnaissable. Ex : () [] {} <> ,;.: etc...
+
+        // TODO: switch (token) { ... } pour déterminer le type de token
         // (utiliser peek() pour les cas nécessitant de regarder le caractère suivant,
         // ex: '=' seul vs '==', '<' seul vs '<=', un chiffre suivi d'autres chiffres, etc.)
     }
