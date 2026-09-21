@@ -79,6 +79,16 @@ public class LexicalAnalysis {
     }
 
     /**
+     * Détermine si le caractère est alphanumérique (underscore toléré)
+     * et ne contient pas d'espace.
+     * @param c Le caractère à évaluer
+     * @return Vrai si le caractère est alphanumérique ou underscore, Faux sinon
+     */
+    private boolean isAlphaNumericChar(char c) {
+        return (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_') && !Character.isWhitespace(c) ;
+    }
+
+    /**
      * (Description à changer)
      * Prise en compte du prochain Token,
      * en regardant tous les caractères du token, et en déduisant le type
@@ -88,7 +98,6 @@ public class LexicalAnalysis {
 
         // On ignore les espaces, tabulations et retours à la ligne
         while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
-            System.out.println("Renault Espace de Carlos Ghosn");
             advanceChar();
         }
 
@@ -99,22 +108,31 @@ public class LexicalAnalysis {
             return;
         }
 
-        // Construction du token jusqu'à trouver un espace
+        // Construction du token tant que les caractères
+        // suivants sont alphanumériques
         StringBuilder tokenBuilder = new StringBuilder();
         do {
             tokenBuilder.append(advanceChar());
-        } while (charPos < source.length() && !Character.isWhitespace(peekNextChar()));
+        } while (charPos < source.length() && isAlphaNumericChar(peekNextChar()));
+
         String token = tokenBuilder.toString();
 
         System.out.println("Pos:" + this.charPos + " Line:" + this.line);
         System.out.println("Token found: " + token);
 
-        // TODO : Vérifier dans la boucle While que le caractère suivant
-        //  n'est pas un caractère spécial reconnaissable. Ex : () [] {} <> ,;.: etc...
-
-        // TODO: switch (token) { ... } pour déterminer le type de token
-        // (utiliser peek() pour les cas nécessitant de regarder le caractère suivant,
+        // (utiliser peekNextChar() pour les cas nécessitant de regarder le caractère suivant,
         // ex: '=' seul vs '==', '<' seul vs '<=', un chiffre suivi d'autres chiffres, etc.)
+
+        switch (token) {
+            case "(" :
+                this.currentToken.setType(ValidTokens.LPAREN);
+                break;
+            case ")" :
+                this.currentToken.setType(ValidTokens.RPAREN);
+                break;
+        }
+
+        this.currentToken.setLine(line);
     }
 
 }
