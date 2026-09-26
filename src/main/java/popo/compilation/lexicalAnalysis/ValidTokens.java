@@ -12,13 +12,13 @@ public enum ValidTokens {
     // Opérateurs arithmétiques
     PLUS,       // +
     MINUS,      // -
-    STAR,       // *  (multiplication ET déréférencement de pointeur, ex: *p)
-    SLASH,      // /
+    MUL,        // *  (multiplication ET déréférencement de pointeur, ex: *p)
+    DIV,        // /
     MOD,        // %  (modulo)
     AMP,        // &  (adresse d'une variable, ex: &x — aussi utilisable en ET binaire)
 
     // Comparateurs
-    LT,         //
+    LT,         // <
     GT,         // >
     LE,         // <=
     GE,         // >=
@@ -40,6 +40,8 @@ public enum ValidTokens {
     RBRACE,     // }
     SEMI,       // ;
     COMMA,      // ,
+    COLON,      // :
+    DOT,        // .
 
     // Mots-clés
     IF,

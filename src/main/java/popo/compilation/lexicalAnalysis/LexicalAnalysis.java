@@ -53,7 +53,7 @@ public class LexicalAnalysis {
     }
 
     /**
-     * Renvoie le caractère courant sans avancer la position, sans le consommer.
+     * Renvoie le caractère suivant sans avancer la position, sans le consommer.
      * Renvoie '\0' si on est à la fin du flux.
      */
     private char peekNextChar() {
@@ -89,6 +89,15 @@ public class LexicalAnalysis {
     }
 
     /**
+     * Consomme les espaces, tabulations et retours à la ligne
+     */
+    private void skipSpaces(){
+        while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
+            advanceChar();
+        }
+    }
+
+    /**
      * (Description à changer)
      * Prise en compte du prochain Token,
      * en regardant tous les caractères du token, et en déduisant le type
@@ -96,10 +105,7 @@ public class LexicalAnalysis {
     public void nextToken() {
         setLastToken(getCurrentToken());
 
-        // On ignore les espaces, tabulations et retours à la ligne
-        while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
-            advanceChar();
-        }
+        skipSpaces();
 
         // Si fin du flux source détecté,
         // On arrête cette fonction
@@ -125,12 +131,97 @@ public class LexicalAnalysis {
 
         // Lecture des tokens reconnaissables
         switch (token) {
+            // Parenthèses et accolades
             case "(" :
                 this.currentToken.setType(ValidTokens.LPAREN);
                 break;
             case ")" :
                 this.currentToken.setType(ValidTokens.RPAREN);
                 break;
+            case "{" :
+                this.currentToken.setType(ValidTokens.LBRACE);
+                break;
+            case "}" :
+                this.currentToken.setType(ValidTokens.RBRACE);
+                break;
+            case "[" :
+                this.currentToken.setType(ValidTokens.LBRACKET);
+                break;
+            case "]" :
+                this.currentToken.setType(ValidTokens.RBRACKET);
+                break;
+            
+            // Reperages & delimiteurs
+            case ":" :
+                this.currentToken.setType(ValidTokens.COLON);
+                break;
+            case ";" :
+                this.currentToken.setType(ValidTokens.SEMI);
+                break;
+            case "," :
+                this.currentToken.setType(ValidTokens.COMMA);
+                break;
+            case "." :
+                this.currentToken.setType(ValidTokens.DOT);
+                break;
+            
+            // Opérateurs arithmétiques
+            case "=" :
+                this.currentToken.setType(ValidTokens.ASSIGN);
+                break;
+            case "+" :
+                this.currentToken.setType(ValidTokens.PLUS);
+                break;
+            case "-" :
+                this.currentToken.setType(ValidTokens.MINUS);
+                break;
+            case "*" :
+                this.currentToken.setType(ValidTokens.MUL);
+                break;
+            case "/" :
+                this.currentToken.setType(ValidTokens.DIV);
+                break;
+            case "%" :
+                this.currentToken.setType(ValidTokens.MOD);
+                break;
+            case "&" :
+                this.currentToken.setType(ValidTokens.AMP);
+                break;
+
+            
+            // Comparateurs d'égalité
+            case "==" :
+                this.currentToken.setType(ValidTokens.EQ);
+                break;
+            case "!=" :
+                this.currentToken.setType(ValidTokens.NEQ);
+                break;
+            
+            // Comparateurs
+            case "<" :
+                this.currentToken.setType(ValidTokens.LT);
+                break;
+            case "<=" :
+                this.currentToken.setType(ValidTokens.LE);
+                break;
+            case ">" :
+                this.currentToken.setType(ValidTokens.GT);
+                break;
+            case ">=" :
+                this.currentToken.setType(ValidTokens.GE);
+                break;
+            
+            // Opérateurs logiques
+            case "&&" :
+                this.currentToken.setType(ValidTokens.AND);
+                break;
+            case "||" :
+                this.currentToken.setType(ValidTokens.OR);
+                break;
+            case "!" :
+                this.currentToken.setType(ValidTokens.NOT);
+                break;
+            
         }
 
         // Prévoir une lecture de valeurs (chaînes de caractères et chiffres)
