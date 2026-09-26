@@ -38,6 +38,8 @@ public enum ValidTokens {
     RBRACKET,   // ]
     LBRACE,     // {
     RBRACE,     // }
+    DQOT,       // "
+    SQOT,       // '
     SEMI,       // ;
     COMMA,      // ,
     COLON,      // :

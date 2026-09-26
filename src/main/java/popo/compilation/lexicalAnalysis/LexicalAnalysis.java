@@ -48,8 +48,9 @@ public class LexicalAnalysis {
 
         System.out.println("Number of characters of source: " + source.length());
 
-        // A faire boucler
-        nextToken();
+        while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
+            nextToken();
+        }
     }
 
     /**
@@ -100,7 +101,8 @@ public class LexicalAnalysis {
     /**
      * (Description à changer)
      * Prise en compte du prochain Token,
-     * en regardant tous les caractères du token, et en déduisant le type
+     * en regardant tous les caractères du token, et en déduisant le type.
+     * Gère correctement les tokens multi-caractères comme ==, !=, <=, >=, &&, ||
      */
     public void nextToken() {
         setLastToken(getCurrentToken());
@@ -114,21 +116,46 @@ public class LexicalAnalysis {
             return;
         }
 
-        // Construction du token tant que les caractères
-        // suivants sont alphanumériques
         StringBuilder tokenBuilder = new StringBuilder();
-        do {
-            tokenBuilder.append(advanceChar());
-        } while (charPos < source.length() && isAlphaNumericChar(peekNextChar()));
+        char firstChar = advanceChar();
+        tokenBuilder.append(firstChar);
+
+        // Si le premier caractère est alphanumérique, continuer à consommer les caractères alphanumériques
+        if (isAlphaNumericChar(firstChar)) {
+            while (charPos < source.length() && isAlphaNumericChar(peekNextChar())) {
+                tokenBuilder.append(advanceChar());
+            }
+        } 
+        // Si le premier caractère est un opérateur ou délimiteur, vérifier si c'est une combinaison de 2 caractères
+        // en utilisant peekNextChar() pour les cas nécessitant de regarder le caractère suivant
+        // ex: '=' seul vs '==', '<' seul vs '<=', '.' seul vs '.5' (nombre décimal), etc.
+        else {
+            char nextChar = peekNextChar();
+            
+            // Vérifier les combinaisons de 2 caractères d'opérateurs
+            if ((firstChar == '=' && nextChar == '=') ||
+                (firstChar == '!' && nextChar == '=') ||
+                (firstChar == '<' && nextChar == '=') ||
+                (firstChar == '>' && nextChar == '=') ||
+                (firstChar == '&' && nextChar == '&') ||
+                (firstChar == '|' && nextChar == '|')) {
+                tokenBuilder.append(advanceChar());
+            }
+            // Cas spécial : si c'est un point suivi d'un chiffre, c'est un nombre décimal
+            else if (firstChar == '.' && Character.isDigit(nextChar)) {
+                // Consommer le point et les chiffres suivants
+                while (charPos < source.length() && Character.isDigit(peekNextChar())) {
+                    tokenBuilder.append(advanceChar());
+                }
+            }
+        }
 
         String token = tokenBuilder.toString();
 
         System.out.println("Pos:" + this.charPos + " Line:" + this.line);
         System.out.println("Token found: " + token);
 
-        // (utiliser peekNextChar() pour les cas nécessitant de regarder le caractère suivant,
-        // ex: '=' seul vs '==', '<' seul vs '<=', un chiffre suivi d'autres chiffres, etc.)
-
+        
         // Lecture des tokens reconnaissables
         switch (token) {
             // Parenthèses et accolades
@@ -163,6 +190,12 @@ public class LexicalAnalysis {
                 break;
             case "." :
                 this.currentToken.setType(ValidTokens.DOT);
+                break;
+            case "\"" :
+                this.currentToken.setType(ValidTokens.DQOT);
+                break;
+            case "'" :
+                this.currentToken.setType(ValidTokens.SQOT);
                 break;
             
             // Opérateurs arithmétiques
