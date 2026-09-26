@@ -48,8 +48,9 @@ public class LexicalAnalysis {
 
         System.out.println("Number of characters of source: " + source.length());
 
-        // A faire boucler
-        nextToken();
+        while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
+            nextToken();
+        }
     }
 
     /**
@@ -108,6 +109,7 @@ public class LexicalAnalysis {
             return;
         }
 
+        /*
         // Construction du token tant que les caractères
         // suivants sont alphanumériques
         StringBuilder tokenBuilder = new StringBuilder();
@@ -115,7 +117,12 @@ public class LexicalAnalysis {
             tokenBuilder.append(advanceChar());
         } while (charPos < source.length() && isAlphaNumericChar(peekNextChar()));
 
+
         String token = tokenBuilder.toString();
+        */
+
+        // Lecture du prochain
+        char token = advanceChar();
 
         System.out.println("Pos:" + this.charPos + " Line:" + this.line);
         System.out.println("Token found: " + token);
@@ -123,7 +130,8 @@ public class LexicalAnalysis {
         // (utiliser peekNextChar() pour les cas nécessitant de regarder le caractère suivant,
         // ex: '=' seul vs '==', '<' seul vs '<=', un chiffre suivi d'autres chiffres, etc.)
 
-        // Lecture des tokens reconnaissables
+        // Lecture des tokens reconnaissables (pour Mathéo)
+        /*
         switch (token) {
             case "(" :
                 this.currentToken.setType(ValidTokens.LPAREN);
@@ -132,10 +140,101 @@ public class LexicalAnalysis {
                 this.currentToken.setType(ValidTokens.RPAREN);
                 break;
         }
+         */
 
-        // Prévoir une lecture de valeurs (chaînes de caractères et chiffres)
+        // Si le token est numérique
+        if (Character.isDigit(token)) {
+            System.out.println("Digital token detected");
 
-        this.currentToken.setLine(line);
+            // Récupération de tous les chiffres de la valeur numérique
+            StringBuilder tokenBuilder = new StringBuilder(String.valueOf(token));
+            while (charPos < source.length() && Character.isDigit(peekNextChar())){
+                tokenBuilder.append(advanceChar());
+            }
+
+            // On lève une erreur si le caractère suivant n'est pas un espace
+            if (!Character.isWhitespace(peekNextChar())) {
+                System.err.println("ERROR : Invalid token detected on line " + this.line);
+                return;
+            }
+
+            // Si le caractère est un espace,
+            // alors on estime qu'on a une valeur numérique
+            else {
+                this.currentToken.setType(ValidTokens.CONST);
+                this.currentToken.setValeur(Integer.parseInt(tokenBuilder.toString()));
+            }
+
+            this.currentToken.setLine(line);
+
+            // Pour tester
+            System.out.println("Token found: " + this.currentToken.getType());
+            if (this.currentToken.getType() == ValidTokens.CONST) {
+                System.out.println("with value: " + this.currentToken.getValeur());
+            }
+        }
+
+        // Si le token est alphabétique
+        else if (Character.isAlphabetic(token)) {
+
+            System.out.println("Alphabetic token detected");
+
+            StringBuilder tokenBuilder = new StringBuilder(String.valueOf(token));
+            while (charPos < source.length() && isAlphaNumericChar(peekNextChar())){
+                tokenBuilder.append(advanceChar());
+            }
+
+            String charToken = tokenBuilder.toString();
+
+            System.out.println("Total token found: " + charToken);
+
+            // Détection de mots clés
+            switch (charToken) {
+                case "if":
+                    this.currentToken.setType(ValidTokens.IF);
+                    break;
+                case "else":
+                    this.currentToken.setType(ValidTokens.ELSE);
+                    break;
+                case "for":
+                    this.currentToken.setType(ValidTokens.FOR);
+                    break;
+                case "while":
+                    this.currentToken.setType(ValidTokens.WHILE);
+                    break;
+                case "do":
+                    this.currentToken.setType(ValidTokens.DO);
+                    break;
+                case "int":
+                    this.currentToken.setType(ValidTokens.INT);
+                    break;
+                case "void":
+                    this.currentToken.setType(ValidTokens.VOID);
+                    break;
+                case "continue":
+                    this.currentToken.setType(ValidTokens.CONTINUE);
+                    break;
+                case "break":
+                    this.currentToken.setType(ValidTokens.BREAK);
+                    break;
+                case "return":
+                    this.currentToken.setType(ValidTokens.RETURN);
+                    break;
+                default:
+                    // Aucun mot-clé reconnu : on considère qu'il s'agit d'un identificateur
+                    this.currentToken.setType(ValidTokens.IDENT);
+                    this.currentToken.setIdent(charToken);
+                    break;
+            }
+
+            this.currentToken.setLine(line);
+
+            // Pour tester
+            System.out.println("Token found: " + this.currentToken.getType());
+            if (this.currentToken.getType() == ValidTokens.IDENT) {
+                System.out.println("with value: " + this.currentToken.getIdent());
+            }
+        }
     }
 
 }
