@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
 
         // Lecture du fichier de test C, en mode flux (buffer)
-        try (InputStream inputStream = Main.class.getResourceAsStream("/samples/test.c");
+        try (InputStream inputStream = Main.class.getResourceAsStream("/samples/petit_test.c");
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             // Conversion du buffer du fichier en String
