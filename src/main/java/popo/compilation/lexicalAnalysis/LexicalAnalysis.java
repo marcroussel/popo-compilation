@@ -95,7 +95,7 @@ public class LexicalAnalysis {
      * en regardant tous les caractères du token, et en déduisant le type
      */
     public void nextToken() {
-        setLastToken(getCurrentToken());
+        setLastToken(new Token(getCurrentToken()));
 
         // On ignore les espaces, tabulations et retours à la ligne
         while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
@@ -153,6 +153,7 @@ public class LexicalAnalysis {
             }
 
             // On lève une erreur si le caractère suivant n'est pas un espace
+            // TODO : Laisser passer des caractères de fermeture (parenthèse fermante, point-virgule, etc...)
             if (!Character.isWhitespace(peekNextChar())) {
                 throw new LexicalException(String.format("Invalid token: '%s' at line %d", tokenBuilder.toString(), this.line));
             }
@@ -240,5 +241,4 @@ public class LexicalAnalysis {
             throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", token, this.line));
         }
     }
-
 }
