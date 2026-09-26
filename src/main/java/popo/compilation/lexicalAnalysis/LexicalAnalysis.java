@@ -154,8 +154,7 @@ public class LexicalAnalysis {
 
             // On lève une erreur si le caractère suivant n'est pas un espace
             if (!Character.isWhitespace(peekNextChar())) {
-                System.err.println("ERROR : Invalid token detected on line " + this.line);
-                return;
+                throw new LexicalException(String.format("Invalid token: '%s' at line %d", tokenBuilder.toString(), this.line));
             }
 
             // Si le caractère est un espace,
@@ -234,6 +233,11 @@ public class LexicalAnalysis {
             if (this.currentToken.getType() == ValidTokens.IDENT) {
                 System.out.println("with value: " + this.currentToken.getIdent());
             }
+        }
+
+        // Si un caractère inconnu a été détecté
+        else {
+            throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", token, this.line));
         }
     }
 
