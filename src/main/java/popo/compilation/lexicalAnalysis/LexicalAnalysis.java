@@ -123,6 +123,7 @@ public class LexicalAnalysis {
         // (utiliser peekNextChar() pour les cas nécessitant de regarder le caractère suivant,
         // ex: '=' seul vs '==', '<' seul vs '<=', un chiffre suivi d'autres chiffres, etc.)
 
+        // Lecture des tokens reconnaissables
         switch (token) {
             case "(" :
                 this.currentToken.setType(ValidTokens.LPAREN);
@@ -131,6 +132,8 @@ public class LexicalAnalysis {
                 this.currentToken.setType(ValidTokens.RPAREN);
                 break;
         }
+
+        // Prévoir une lecture de valeurs (chaînes de caractères et chiffres)
 
         this.currentToken.setLine(line);
     }

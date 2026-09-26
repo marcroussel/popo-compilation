@@ -1,5 +1,5 @@
 
-   while(compteur <= 100) {
+   while (compteur <= 100) {
         compteur = compteur * 2;
         if (compteur == 64) {
             break;
