@@ -1,6 +1,12 @@
 package popo.compilation.lexicalAnalysis;
 
+import java.util.Set;
+
 public class LexicalAnalysis {
+
+    // Caractères pouvant suivre un token sans faire partie de celui-ci
+    // (ex: "42;" ou "42)" sont valides, le ';'/')' n'appartient pas au nombre)
+    private static final Set<Character> CLOSING_CHARS = Set.of(')', ']', '}', ';', ',');
 
     // Code source
     private final String source;
@@ -152,14 +158,16 @@ public class LexicalAnalysis {
                 tokenBuilder.append(advanceChar());
             }
 
-            // On lève une erreur si le caractère suivant n'est pas un espace
-            // TODO : Laisser passer des caractères de fermeture (parenthèse fermante, point-virgule, etc...)
-            if (!Character.isWhitespace(peekNextChar())) {
+            // On lève une erreur si le caractère suivant n'est ni un espace,
+            // ni un caractère de fermeture (';', ')', ... ), ni la fin du flux
+            char afterDigits = peekNextChar();
+            if (!Character.isWhitespace(afterDigits) && afterDigits != '\0' && !CLOSING_CHARS.contains(afterDigits)) {
                 throw new LexicalException(String.format("Invalid token: '%s' at line %d", tokenBuilder.toString(), this.line));
             }
 
-            // Si le caractère est un espace,
-            // alors on estime qu'on a une valeur numérique
+            // Sinon, on a bien une valeur numérique valide
+            // (le caractère de fermeture éventuel n'est pas consommé ici,
+            // il sera lu comme son propre token au prochain appel)
             else {
                 this.currentToken.setType(ValidTokens.CONST);
                 this.currentToken.setValeur(Integer.parseInt(tokenBuilder.toString()));
