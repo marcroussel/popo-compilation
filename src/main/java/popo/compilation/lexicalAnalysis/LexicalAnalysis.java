@@ -1,5 +1,8 @@
 package popo.compilation.lexicalAnalysis;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class LexicalAnalysis {
 
     // Code source
@@ -12,6 +15,18 @@ public class LexicalAnalysis {
     // Position de lecture dans le flux source et ligne courante
     private int charPos = 0;
     private int line = 1;
+
+    // Map des tokens multi-caractères
+    private static final Map<String, ValidTokens> TWO_CHAR_TOKENS = new HashMap<>();
+
+    static {
+        TWO_CHAR_TOKENS.put("==", ValidTokens.EQ);
+        TWO_CHAR_TOKENS.put("!=", ValidTokens.NEQ);
+        TWO_CHAR_TOKENS.put("<=", ValidTokens.LE);
+        TWO_CHAR_TOKENS.put(">=", ValidTokens.GE);
+        TWO_CHAR_TOKENS.put("&&", ValidTokens.AND);
+        TWO_CHAR_TOKENS.put("||", ValidTokens.OR);
+    }
 
 
     public LexicalAnalysis(String source) {
@@ -99,6 +114,18 @@ public class LexicalAnalysis {
     }
 
     /**
+     * Vérifie si deux caractères consécutifs forment un token valide multi-caractères
+     * en cherchant dans la Map TWO_CHAR_TOKENS
+     * @param firstChar Le premier caractère
+     * @param secondChar Le deuxième caractère
+     * @return Le ValidTokens correspondant, ou null si ce n'est pas une combinaison valide
+     */
+    private ValidTokens getTwoCharToken(char firstChar, char secondChar) {
+        String twoCharToken = String.valueOf(firstChar) + secondChar;
+        return TWO_CHAR_TOKENS.get(twoCharToken);
+    }
+
+    /**
      * (Description à changer)
      * Prise en compte du prochain Token,
      * en regardant tous les caractères du token, et en déduisant le type.
@@ -132,13 +159,9 @@ public class LexicalAnalysis {
         else {
             char nextChar = peekNextChar();
             
-            // Vérifier les combinaisons de 2 caractères d'opérateurs
-            if ((firstChar == '=' && nextChar == '=') ||
-                (firstChar == '!' && nextChar == '=') ||
-                (firstChar == '<' && nextChar == '=') ||
-                (firstChar == '>' && nextChar == '=') ||
-                (firstChar == '&' && nextChar == '&') ||
-                (firstChar == '|' && nextChar == '|')) {
+            // Vérifier si c'est une combinaison de 2 caractères valide en utilisant ValidTokens
+            ValidTokens twoCharTokenType = getTwoCharToken(firstChar, nextChar);
+            if (twoCharTokenType != null) {
                 tokenBuilder.append(advanceChar());
             }
             // Cas spécial : si c'est un point suivi d'un chiffre, c'est un nombre décimal
