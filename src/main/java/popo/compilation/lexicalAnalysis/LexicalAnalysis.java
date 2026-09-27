@@ -1,5 +1,7 @@
 package popo.compilation.lexicalAnalysis;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class LexicalAnalysis {
@@ -18,6 +20,18 @@ public class LexicalAnalysis {
     // Position de lecture dans le flux source et ligne courante
     private int charPos = 0;
     private int line = 1;
+
+    // Map des tokens multi-caractères
+    private static final Map<String, ValidTokens> TWO_CHAR_TOKENS = new HashMap<>();
+
+    static {
+        TWO_CHAR_TOKENS.put("==", ValidTokens.EQ);
+        TWO_CHAR_TOKENS.put("!=", ValidTokens.NEQ);
+        TWO_CHAR_TOKENS.put("<=", ValidTokens.LE);
+        TWO_CHAR_TOKENS.put(">=", ValidTokens.GE);
+        TWO_CHAR_TOKENS.put("&&", ValidTokens.AND);
+        TWO_CHAR_TOKENS.put("||", ValidTokens.OR);
+    }
 
 
     public LexicalAnalysis(String source) {
@@ -46,9 +60,6 @@ public class LexicalAnalysis {
      * Initialise l'analyse lexicale
      */
     public void init() {
-        // System.out.print(source);
-
-        // System.out.println();
         System.out.println("Construction des Tokens");
         setCurrentToken(new Token(null, 0, 0));
 
@@ -60,7 +71,7 @@ public class LexicalAnalysis {
     }
 
     /**
-     * Renvoie le caractère courant sans avancer la position, sans le consommer.
+     * Renvoie le caractère suivant sans avancer la position, sans le consommer.
      * Renvoie '\0' si on est à la fin du flux.
      */
     private char peekNextChar() {
@@ -96,17 +107,36 @@ public class LexicalAnalysis {
     }
 
     /**
-     * (Description à changer)
-     * Prise en compte du prochain Token,
-     * en regardant tous les caractères du token, et en déduisant le type
+     * Consomme les espaces, tabulations et retours à la ligne
+     */
+    private void skipSpaces(){
+        while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
+            advanceChar();
+        }
+    }
+
+    /**
+     * Vérifie si deux caractères consécutifs forment un token valide multi-caractères
+     * en cherchant dans la Map TWO_CHAR_TOKENS
+     * @param firstChar Le premier caractère
+     * @param secondChar Le deuxième caractère
+     * @return Le ValidTokens correspondant, ou null si ce n'est pas une combinaison valide
+     */
+    private ValidTokens getTwoCharToken(char firstChar, char secondChar) {
+        String twoCharToken = String.valueOf(firstChar) + secondChar;
+        return TWO_CHAR_TOKENS.get(twoCharToken);
+    }
+
+    /**
+     * Détermination du prochain Token,
+     * en regardant tous les caractères du token, et en déduisant le type.
+     * Gère correctement les tokens multi-caractères comme ==, !=, <=, >=, &&, ||
+     * ainsi que les caractères alphanumériques
      */
     public void nextToken() {
         setLastToken(new Token(getCurrentToken()));
 
-        // On ignore les espaces, tabulations et retours à la ligne
-        while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
-            advanceChar();
-        }
+        skipSpaces();
 
         // Si fin du flux source détecté,
         // On arrête cette fonction
@@ -115,46 +145,154 @@ public class LexicalAnalysis {
             return;
         }
 
-        /*
-        // Construction du token tant que les caractères
-        // suivants sont alphanumériques
         StringBuilder tokenBuilder = new StringBuilder();
-        do {
-            tokenBuilder.append(advanceChar());
-        } while (charPos < source.length() && isAlphaNumericChar(peekNextChar()));
+        char firstChar = advanceChar();
+        tokenBuilder.append(firstChar);
+
+        if (!isAlphaNumericChar(firstChar)) {
+            System.out.println("Non alphanumeric token detected");
+
+            // Si le premier caractère est un opérateur ou délimiteur, vérifier si c'est une combinaison de 2 caractères
+            // en utilisant peekNextChar() pour les cas nécessitant de regarder le caractère suivant
+            // ex: '=' seul vs '==', '<' seul vs '<=', etc.
+            char nextChar = peekNextChar();
+
+            // Vérifier si c'est une combinaison de 2 caractères valide en utilisant ValidTokens
+            ValidTokens twoCharTokenType = getTwoCharToken(firstChar, nextChar);
+            if (twoCharTokenType != null) {
+                tokenBuilder.append(advanceChar());
+            }
+
+            // TODO : Potentiellement à retirer - À confirmer avec le prof
+            // Cas spécial : si c'est un point suivi d'un chiffre, c'est un nombre décimal
+            /*
+            else if (firstChar == '.' && Character.isDigit(nextChar)) {
+                // Consommer le point et les chiffres suivants
+                while (charPos < source.length() && Character.isDigit(peekNextChar())) {
+                    tokenBuilder.append(advanceChar());
+                }
+            }
+             */
+
+            String token = tokenBuilder.toString();
+
+            System.out.println("Pos:" + this.charPos + " Line:" + this.line);
+            System.out.println("Token found: " + token);
 
 
-        String token = tokenBuilder.toString();
-        */
+            // Lecture des tokens reconnaissables
+            switch (token) {
+                // Parenthèses et accolades
+                case "(":
+                    this.currentToken.setType(ValidTokens.LPAREN);
+                    break;
+                case ")":
+                    this.currentToken.setType(ValidTokens.RPAREN);
+                    break;
+                case "{":
+                    this.currentToken.setType(ValidTokens.LBRACE);
+                    break;
+                case "}":
+                    this.currentToken.setType(ValidTokens.RBRACE);
+                    break;
+                case "[":
+                    this.currentToken.setType(ValidTokens.LBRACKET);
+                    break;
+                case "]":
+                    this.currentToken.setType(ValidTokens.RBRACKET);
+                    break;
 
-        // Lecture du prochain
-        char token = advanceChar();
+                // Reperages & delimiteurs
+                case ":":
+                    this.currentToken.setType(ValidTokens.COLON);
+                    break;
+                case ";":
+                    this.currentToken.setType(ValidTokens.SEMI);
+                    break;
+                case ",":
+                    this.currentToken.setType(ValidTokens.COMMA);
+                    break;
+                case ".":
+                    this.currentToken.setType(ValidTokens.DOT);
+                    break;
+                case "\"":
+                    this.currentToken.setType(ValidTokens.DQOT);
+                    break;
+                case "'":
+                    this.currentToken.setType(ValidTokens.SQOT);
+                    break;
 
-        System.out.println("Pos:" + this.charPos + " Line:" + this.line);
-        System.out.println("Token found: " + token);
+                // Opérateurs arithmétiques
+                case "=":
+                    this.currentToken.setType(ValidTokens.ASSIGN);
+                    break;
+                case "+":
+                    this.currentToken.setType(ValidTokens.PLUS);
+                    break;
+                case "-":
+                    this.currentToken.setType(ValidTokens.MINUS);
+                    break;
+                case "*":
+                    this.currentToken.setType(ValidTokens.MUL);
+                    break;
+                case "/":
+                    this.currentToken.setType(ValidTokens.DIV);
+                    break;
+                case "%":
+                    this.currentToken.setType(ValidTokens.MOD);
+                    break;
+                case "&":
+                    this.currentToken.setType(ValidTokens.AMP);
+                    break;
 
-        // (utiliser peekNextChar() pour les cas nécessitant de regarder le caractère suivant,
-        // ex: '=' seul vs '==', '<' seul vs '<=', un chiffre suivi d'autres chiffres, etc.)
 
-        // Lecture des tokens reconnaissables (pour Mathéo)
-        /*
-        switch (token) {
-            case "(" :
-                this.currentToken.setType(ValidTokens.LPAREN);
-                break;
-            case ")" :
-                this.currentToken.setType(ValidTokens.RPAREN);
-                break;
+                // Comparateurs d'égalité
+                case "==":
+                    this.currentToken.setType(ValidTokens.EQ);
+                    break;
+                case "!=":
+                    this.currentToken.setType(ValidTokens.NEQ);
+                    break;
+
+                // Comparateurs
+                case "<":
+                    this.currentToken.setType(ValidTokens.LT);
+                    break;
+                case "<=":
+                    this.currentToken.setType(ValidTokens.LE);
+                    break;
+                case ">":
+                    this.currentToken.setType(ValidTokens.GT);
+                    break;
+                case ">=":
+                    this.currentToken.setType(ValidTokens.GE);
+                    break;
+
+                // Opérateurs logiques
+                case "&&":
+                    this.currentToken.setType(ValidTokens.AND);
+                    break;
+                case "||":
+                    this.currentToken.setType(ValidTokens.OR);
+                    break;
+                case "!":
+                    this.currentToken.setType(ValidTokens.NOT);
+                    break;
+
+                // Lorsqu'un caractère inconnu a été détecté,
+                // On lève une erreur
+                default:
+                    throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
+            }
         }
-         */
+
 
         // Si le token est numérique
-        if (Character.isDigit(token)) {
+        if (Character.isDigit(firstChar)) {
             System.out.println("Digital token detected");
 
             // Récupération de tous les chiffres de la valeur numérique
-            StringBuilder tokenBuilder = new StringBuilder(String.valueOf(token));
-            while (charPos < source.length() && Character.isDigit(peekNextChar())){
+            while (charPos < source.length() && Character.isDigit(peekNextChar())) {
                 tokenBuilder.append(advanceChar());
             }
 
@@ -183,12 +321,13 @@ public class LexicalAnalysis {
         }
 
         // Si le token est alphabétique
-        else if (Character.isAlphabetic(token)) {
+        else if (Character.isAlphabetic(firstChar)) {
 
             System.out.println("Alphabetic token detected");
 
-            StringBuilder tokenBuilder = new StringBuilder(String.valueOf(token));
-            while (charPos < source.length() && isAlphaNumericChar(peekNextChar())){
+            // Récupération des autres caractères, tant qu'ils sont alphanumériques
+            // ou des underscores
+            while (charPos < source.length() && isAlphaNumericChar(peekNextChar())) {
                 tokenBuilder.append(advanceChar());
             }
 
@@ -244,9 +383,9 @@ public class LexicalAnalysis {
             }
         }
 
-        // Si un caractère inconnu a été détecté
+        // Pour tous les autres cas
         else {
-            throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", token, this.line));
+            throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", firstChar, this.line));
         }
     }
 }
