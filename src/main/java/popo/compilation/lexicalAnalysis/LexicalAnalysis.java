@@ -66,6 +66,7 @@ public class LexicalAnalysis {
         System.out.println("Number of characters of source: " + source.length());
 
         while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
+            System.out.println("");
             nextToken();
         }
     }
@@ -161,6 +162,15 @@ public class LexicalAnalysis {
             ValidTokens twoCharTokenType = getTwoCharToken(firstChar, nextChar);
             if (twoCharTokenType != null) {
                 tokenBuilder.append(advanceChar());
+
+                // Créer directement le token avec le type détecté par la Map
+                this.currentToken.setType(twoCharTokenType);
+                this.currentToken.setLine(line);
+
+                System.out.println("Pos:" + this.charPos + " Line:" + this.line);
+                System.out.println("Token found: " + tokenBuilder.toString());
+
+                return;
             }
 
             // TODO : Potentiellement à retirer - À confirmer avec le prof
@@ -179,8 +189,7 @@ public class LexicalAnalysis {
             System.out.println("Pos:" + this.charPos + " Line:" + this.line);
             System.out.println("Token found: " + token);
 
-
-            // Lecture des tokens reconnaissables
+            // Lecture des tokens simples (caractères uniques et identifiants)
             switch (token) {
                 // Parenthèses et accolades
                 case "(":
@@ -245,50 +254,29 @@ public class LexicalAnalysis {
                     this.currentToken.setType(ValidTokens.AMP);
                     break;
 
-
-                // Comparateurs d'égalité
-                case "==":
-                    this.currentToken.setType(ValidTokens.EQ);
-                    break;
-                case "!=":
-                    this.currentToken.setType(ValidTokens.NEQ);
-                    break;
-
                 // Comparateurs
                 case "<":
                     this.currentToken.setType(ValidTokens.LT);
                     break;
-                case "<=":
-                    this.currentToken.setType(ValidTokens.LE);
-                    break;
                 case ">":
                     this.currentToken.setType(ValidTokens.GT);
                     break;
-                case ">=":
-                    this.currentToken.setType(ValidTokens.GE);
-                    break;
 
                 // Opérateurs logiques
-                case "&&":
-                    this.currentToken.setType(ValidTokens.AND);
-                    break;
-                case "||":
-                    this.currentToken.setType(ValidTokens.OR);
-                    break;
                 case "!":
                     this.currentToken.setType(ValidTokens.NOT);
                     break;
-
                 // Lorsqu'un caractère inconnu a été détecté,
                 // On lève une erreur
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
+
+            this.currentToken.setLine(line);
         }
 
-
         // Si le token est numérique
-        if (Character.isDigit(firstChar)) {
+        else if (Character.isDigit(firstChar)) {
             System.out.println("Digital token detected");
 
             // Récupération de tous les chiffres de la valeur numérique
@@ -310,7 +298,6 @@ public class LexicalAnalysis {
                 this.currentToken.setType(ValidTokens.CONST);
                 this.currentToken.setValeur(Integer.parseInt(tokenBuilder.toString()));
             }
-
             this.currentToken.setLine(line);
 
             // Pour tester
