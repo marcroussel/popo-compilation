@@ -33,6 +33,17 @@ public class Token {
         this.line = line;
     }
 
+    /**
+     * Constructeur de copie
+     * @param token le Token à copier
+     */
+    public Token(Token token) {
+        this.type = token.getType();
+        this.valeur = token.getValeur();
+        this.ident = token.getIdent();
+        this.line = token.getLine();
+    }
+
     public ValidTokens getType() {
         return type;
     }
