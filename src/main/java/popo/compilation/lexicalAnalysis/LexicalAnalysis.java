@@ -1,5 +1,6 @@
 package popo.compilation.lexicalAnalysis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class LexicalAnalysis {
     // Tokens courant et dernier vu
     private Token currentToken;
     private Token lastToken;
+    private ArrayList<Token> tokens = new ArrayList<>();
 
     // Position de lecture dans le flux source et ligne courante
     private int charPos = 0;
@@ -68,7 +70,11 @@ public class LexicalAnalysis {
         while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
             System.out.println("");
             nextToken();
+            Token tokenToAdd = new Token(getCurrentToken());
+            tokens.add(tokenToAdd);
+            System.out.println("Adding current token: " + getCurrentToken().getType());
         }
+        Accept(tokens);
     }
 
     /**
@@ -271,7 +277,7 @@ public class LexicalAnalysis {
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
-
+            System.out.println("Current token type: " + this.currentToken.getType());
             this.currentToken.setLine(line);
         }
 
@@ -374,5 +380,42 @@ public class LexicalAnalysis {
         else {
             throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", firstChar, this.line));
         }
+    }
+
+    public boolean Accept(ArrayList<Token> tokens) {
+        System.out.println("\n========== LEXICAL ACCEPTANCE START ==========\n");
+        LexicalAcceptor lex = new LexicalAcceptor(tokens);
+        
+        boolean accepted = lex.acceptWhile();
+        System.out.println("acceptWhile result: " + accepted);
+        
+        accepted = accepted && lex.acceptIf();
+        System.out.println("acceptIf result: " + accepted);
+        
+        accepted = accepted && lex.acceptFor();
+        System.out.println("acceptFor result: " + accepted);
+        
+        accepted = accepted && lex.acceptDo();
+        System.out.println("acceptDo result: " + accepted);
+        
+        accepted = accepted && lex.acceptReturn();
+        System.out.println("acceptReturn result: " + accepted);
+        
+        accepted = accepted && lex.acceptInt();
+        System.out.println("acceptInt result: " + accepted);
+        
+        accepted = accepted && lex.acceptVoid();
+        System.out.println("acceptVoid result: " + accepted);
+        
+        // accepted = accepted && lex.acceptBreak();
+        // System.out.println("acceptBreak result: " + accepted);
+        
+        // accepted = accepted && lex.acceptContinue();
+        // System.out.println("acceptContinue result: " + accepted);
+        
+        System.out.println("\n========== LEXICAL ACCEPTANCE END ==========");
+        System.out.println("Global result: " + accepted + "\n");
+        
+        return accepted;
     }
 }
