@@ -69,7 +69,6 @@ public class LexicalAnalysis {
 
         while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
             System.out.println("");
-            next();
             Token tokenToAdd = new Token(getCurrentToken());
             tokens.add(tokenToAdd);
             System.out.println("Adding current token: " + getCurrentToken().getType());
@@ -396,5 +395,6 @@ public class LexicalAnalysis {
                     String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.getType(), this.line)
             );
         }
+
     }
 }
