@@ -1,10 +1,20 @@
-package popo.compilation.lexicalAnalysis;
+package popo.compilation.token;
 
 public class Token {
     public ValidTokens type;
     public int valeur;
     public String ident; // Pour stocker le nom de la variable (si on détecte une variable)
     public int line;
+
+    /**
+     * Constructeur vide
+     */
+    public Token() {
+        this.type = null;
+        this.valeur = 0;
+        this.ident = null;
+        this.line = 1;
+    }
 
     /**
      * Constructeur par défaut
