@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import popo.compilation.SyntaxAcceptor.SyntaxAcceptor;
-
 
 public class LexicalAnalysis {
 
@@ -72,12 +70,11 @@ public class LexicalAnalysis {
 
         while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
             System.out.println("");
-            nextToken();
             Token tokenToAdd = new Token(getCurrentToken());
             tokens.add(tokenToAdd);
             System.out.println("Adding current token: " + getCurrentToken().getType());
         }
-        Accept(tokens);
+        //Accept(tokens);
     }
 
     /**
@@ -143,7 +140,7 @@ public class LexicalAnalysis {
      * Gère correctement les tokens multi-caractères comme ==, !=, <=, >=, &&, ||
      * ainsi que les caractères alphanumériques
      */
-    public void nextToken() {
+    public void next() {
         setLastToken(new Token(getCurrentToken()));
 
         skipSpaces();
@@ -384,5 +381,20 @@ public class LexicalAnalysis {
             throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", firstChar, this.line));
         }
     }
+    boolean check(ValidTokens type){
+        if (currentToken.getType() == type) {
+            next();
+            return true;
+        }
 
+        return false;
+    }
+
+    void accept(ValidTokens type) throws LexicalException {
+        if (currentToken.getType() != type) {
+            throw new LexicalException(
+                    String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.getType(), this.line)
+            );
+        }
+    }
 }
