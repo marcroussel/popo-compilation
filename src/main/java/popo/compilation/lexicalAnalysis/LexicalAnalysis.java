@@ -422,7 +422,7 @@ public class LexicalAnalysis {
      * @param type Le type à vérifier pour le token courant.
      * @return Vrai si le token courant est du type entré en paramètres, et a été consommé, et Faux sinon.
      */
-    boolean check(ValidTokens type){
+    public boolean check(ValidTokens type){
         if (currentToken.type == type) {
             next();
             return true;
@@ -436,7 +436,7 @@ public class LexicalAnalysis {
      * @param type Le type à vérifier pour le token courant.
      * @throws LexicalException Lorsque le token courant n'est pas du type entré en paramètres.
      */
-    void accept(ValidTokens type) throws LexicalException {
+    public void accept(ValidTokens type) throws LexicalException {
         if (currentToken.type != type) {
             throw new LexicalException(
                     String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.type, this.line)

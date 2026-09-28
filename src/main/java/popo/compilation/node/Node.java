@@ -1,5 +1,7 @@
 package popo.compilation.node;
 
+import java.util.ArrayList;
+
 public class Node {
     public int type; // TODO : Changer le type en ValidToken
     public String value;
@@ -8,7 +10,7 @@ public class Node {
     public int lineNumber;
 
     public int nbChildren;
-    public Node[] children;
+    public ArrayList<Node> children;
 
     public Node(int type) {
         this.type = type;
@@ -22,13 +24,22 @@ public class Node {
     public Node (int type, Node child1) {
         this.type = type;
         this.nbChildren = 1;
-        this.children = new Node[]{child1};
+        this.children = new ArrayList<Node>() {
+            {
+                add(child1);
+            }
+        };
     }
 
     public Node (int type, Node child1, Node child2) {
         this.type = type;
         this.nbChildren = 2;
-        this.children = new Node[]{child1, child2};
+        this.children = new ArrayList<Node>()  {
+            {
+                add(child1);
+                add(child2);
+            }
+        };
     }
 
     public void addNode (Node parent, Node child) {
