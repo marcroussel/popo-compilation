@@ -1,5 +1,15 @@
 package popo.compilation.lexicalAnalysis;
 
+import popo.compilation.token.Token;
+import popo.compilation.token.ValidTokens;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +28,6 @@ public class LexicalAnalysis {
     // Tokens courant et dernier vu
     public Token currentToken;
     public Token lastToken;
-    public ArrayList<Token> tokens = new ArrayList<>();
 
     // Position de lecture dans le flux source et ligne courante
     public int charPos = 0;
@@ -36,9 +45,40 @@ public class LexicalAnalysis {
         TWO_CHAR_TOKENS.put("||", ValidTokens.OR);
     }
 
+    /**
+     * Constructeur de l'analyseur lexical.
+     * Convertit le fichier source en un String,
+     * et charge le premier token dans currentToken.
+     * @param sourceFileName : Le chemin vers le fichier source
+     */
+    public LexicalAnalysis(String sourceFileName) {
+        this.source = readSource(sourceFileName);
+    }
 
-    public LexicalAnalysis(String source) {
-        this.source = source;
+    /**
+     * Lit le fichier source et le convertit en String.
+     * Cherche d'abord sur le système de fichiers (cas d'un chemin passé en argument
+     * de l'exécutable), puis dans le classpath (ex: "/samples/petit_test.c",
+     * qui se trouve dans src/main/resources).
+     * @param sourceFileName : Le chemin vers le fichier source
+     * @return Le contenu du fichier
+     */
+    private static String readSource(String sourceFileName) {
+        try {
+            Path path = Path.of(sourceFileName);
+            if (Files.isRegularFile(path)) {
+                return Files.readString(path, StandardCharsets.UTF_8);
+            }
+
+            try (InputStream inputStream = LexicalAnalysis.class.getResourceAsStream(sourceFileName)) {
+                if (inputStream == null) {
+                    throw new FileNotFoundException("Source file not found: " + sourceFileName);
+                }
+                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     /* ------------------------------------------------------------------------------------- */

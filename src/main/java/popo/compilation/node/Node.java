@@ -1,4 +1,4 @@
-package popo.compilation.SyntaxAcceptor;
+package popo.compilation.node;
 
 public class Node {
     public ValidNode type;

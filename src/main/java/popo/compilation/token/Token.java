@@ -1,4 +1,4 @@
-package popo.compilation.lexicalAnalysis;
+package popo.compilation.token;
 
 public class Token {
     public ValidTokens type;
