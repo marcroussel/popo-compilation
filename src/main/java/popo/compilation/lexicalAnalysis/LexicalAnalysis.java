@@ -1,8 +1,10 @@
 package popo.compilation.lexicalAnalysis;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
 
 public class LexicalAnalysis {
 
@@ -16,6 +18,7 @@ public class LexicalAnalysis {
     // Tokens courant et dernier vu
     private Token currentToken;
     private Token lastToken;
+    private ArrayList<Token> tokens = new ArrayList<>();
 
     // Position de lecture dans le flux source et ligne courante
     private int charPos = 0;
@@ -60,6 +63,7 @@ public class LexicalAnalysis {
      * Initialise l'analyse lexicale
      */
     public void init() {
+        // prend un nom de fichier source et initialise l'analyse lexicale
         System.out.println("Construction des Tokens");
         setCurrentToken(new Token(null, 0, 0));
 
@@ -67,8 +71,11 @@ public class LexicalAnalysis {
 
         while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
             System.out.println("");
-            next();
+            Token tokenToAdd = new Token(getCurrentToken());
+            tokens.add(tokenToAdd);
+            System.out.println("Adding current token: " + getCurrentToken().getType());
         }
+        //Accept(tokens);
     }
 
     /**
@@ -271,7 +278,7 @@ public class LexicalAnalysis {
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
-
+            System.out.println("Current token type: " + this.currentToken.getType());
             this.currentToken.setLine(line);
         }
 
@@ -375,7 +382,6 @@ public class LexicalAnalysis {
             throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", firstChar, this.line));
         }
     }
-
     boolean check(ValidTokens type){
         if (currentToken.getType() == type) {
             next();
