@@ -10,22 +10,22 @@ public class LexicalAnalysis {
 
     // Caractères pouvant suivre un token sans faire partie de celui-ci
     // (ex: "42;" ou "42)" sont valides, le ';'/')' n'appartient pas au nombre)
-    private static final Set<Character> CLOSING_CHARS = Set.of(')', ']', '}', ';', ',');
+    public static final Set<Character> CLOSING_CHARS = Set.of(')', ']', '}', ';', ',');
 
     // Code source
-    private final String source;
+    public final String source;
 
     // Tokens courant et dernier vu
-    private Token currentToken;
-    private Token lastToken;
-    private ArrayList<Token> tokens = new ArrayList<>();
+    public Token currentToken;
+    public Token lastToken;
+    public ArrayList<Token> tokens = new ArrayList<>();
 
     // Position de lecture dans le flux source et ligne courante
-    private int charPos = 0;
-    private int line = 1;
+    public int charPos = 0;
+    public int line = 1;
 
     // Map des tokens multi-caractères
-    private static final Map<String, ValidTokens> TWO_CHAR_TOKENS = new HashMap<>();
+    public static final Map<String, ValidTokens> TWO_CHAR_TOKENS = new HashMap<>();
 
     static {
         TWO_CHAR_TOKENS.put("==", ValidTokens.EQ);
@@ -41,22 +41,6 @@ public class LexicalAnalysis {
         this.source = source;
     }
 
-    public Token getCurrentToken() {
-        return currentToken;
-    }
-
-    private void setCurrentToken(Token currentToken) {
-        this.currentToken = currentToken;
-    }
-
-    public Token getLastToken() {
-        return lastToken;
-    }
-
-    private void setLastToken(Token lastToken) {
-        this.lastToken = lastToken;
-    }
-
     /* ------------------------------------------------------------------------------------- */
 
     /**
@@ -65,15 +49,15 @@ public class LexicalAnalysis {
     public void init() {
         // prend un nom de fichier source et initialise l'analyse lexicale
         System.out.println("Construction des Tokens");
-        setCurrentToken(new Token(null, 0, 0));
+        this.currentToken = new Token(null, 0, 0);
 
         System.out.println("Number of characters of source: " + source.length());
 
-        while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
+        while (charPos < source.length() && this.currentToken.type != ValidTokens.EOS) {
             System.out.println("");
-            Token tokenToAdd = new Token(getCurrentToken());
+            Token tokenToAdd = new Token(this.currentToken);
             tokens.add(tokenToAdd);
-            System.out.println("Adding current token: " + getCurrentToken().getType());
+            System.out.println("Adding current token: " + this.currentToken.type);
         }
         //Accept(tokens);
     }
@@ -82,7 +66,7 @@ public class LexicalAnalysis {
      * Renvoie le caractère suivant sans avancer la position, sans le consommer.
      * Renvoie '\0' si on est à la fin du flux.
      */
-    private char peekNextChar() {
+    public char peekNextChar() {
         if (charPos >= source.length()) {
             return '\0';
         }
@@ -93,7 +77,7 @@ public class LexicalAnalysis {
      * Consomme et renvoie le caractère courant, en avançant la position.
      * Met à jour le compteur de ligne si on passe un retour à la ligne.
      */
-    private char advanceChar() {
+    public char advanceChar() {
         char c = source.charAt(charPos);
         charPos++;
 
@@ -110,14 +94,14 @@ public class LexicalAnalysis {
      * @param c Le caractère à évaluer
      * @return Vrai si le caractère est alphanumérique ou underscore, Faux sinon
      */
-    private boolean isAlphaNumericChar(char c) {
+    public boolean isAlphaNumericChar(char c) {
         return (Character.isAlphabetic(c) || Character.isDigit(c) || c == '_') && !Character.isWhitespace(c) ;
     }
 
     /**
      * Consomme les espaces, tabulations et retours à la ligne
      */
-    private void skipSpaces(){
+    public void skipSpaces(){
         while (charPos < source.length() && Character.isWhitespace(peekNextChar())) {
             advanceChar();
         }
@@ -130,7 +114,7 @@ public class LexicalAnalysis {
      * @param secondChar Le deuxième caractère
      * @return Le ValidTokens correspondant, ou null si ce n'est pas une combinaison valide
      */
-    private ValidTokens getTwoCharToken(char firstChar, char secondChar) {
+    public ValidTokens getTwoCharToken(char firstChar, char secondChar) {
         String twoCharToken = String.valueOf(firstChar) + secondChar;
         return TWO_CHAR_TOKENS.get(twoCharToken);
     }
@@ -142,14 +126,14 @@ public class LexicalAnalysis {
      * ainsi que les caractères alphanumériques
      */
     public void next() {
-        setLastToken(new Token(getCurrentToken()));
+        this.lastToken = new Token(this.currentToken);
 
         skipSpaces();
 
         // Si fin du flux source détecté,
         // On arrête cette fonction
         if (charPos >= source.length()) {
-            setCurrentToken(new Token(ValidTokens.EOS, 0, line));
+            this.currentToken = new Token(ValidTokens.EOS, 0, line);
             return;
         }
 
@@ -171,8 +155,8 @@ public class LexicalAnalysis {
                 tokenBuilder.append(advanceChar());
 
                 // Créer directement le token avec le type détecté par la Map
-                this.currentToken.setType(twoCharTokenType);
-                this.currentToken.setLine(line);
+                this.currentToken.type = twoCharTokenType;
+                this.currentToken.line = line;
 
                 System.out.println("Pos:" + this.charPos + " Line:" + this.line);
                 System.out.println("Token found: " + tokenBuilder.toString());
@@ -200,86 +184,86 @@ public class LexicalAnalysis {
             switch (token) {
                 // Parenthèses et accolades
                 case "(":
-                    this.currentToken.setType(ValidTokens.LPAREN);
+                    this.currentToken.type = ValidTokens.LPAREN;
                     break;
                 case ")":
-                    this.currentToken.setType(ValidTokens.RPAREN);
+                    this.currentToken.type = ValidTokens.RPAREN;
                     break;
                 case "{":
-                    this.currentToken.setType(ValidTokens.LBRACE);
+                    this.currentToken.type = ValidTokens.LBRACE;
                     break;
                 case "}":
-                    this.currentToken.setType(ValidTokens.RBRACE);
+                    this.currentToken.type = ValidTokens.RBRACE;
                     break;
                 case "[":
-                    this.currentToken.setType(ValidTokens.LBRACKET);
+                    this.currentToken.type = ValidTokens.LBRACKET;
                     break;
                 case "]":
-                    this.currentToken.setType(ValidTokens.RBRACKET);
+                    this.currentToken.type = ValidTokens.RBRACKET;
                     break;
 
                 // Reperages & delimiteurs
                 case ":":
-                    this.currentToken.setType(ValidTokens.COLON);
+                    this.currentToken.type = ValidTokens.COLON;
                     break;
                 case ";":
-                    this.currentToken.setType(ValidTokens.SEMI);
+                    this.currentToken.type = ValidTokens.SEMI;
                     break;
                 case ",":
-                    this.currentToken.setType(ValidTokens.COMMA);
+                    this.currentToken.type = ValidTokens.COMMA;
                     break;
                 case ".":
-                    this.currentToken.setType(ValidTokens.DOT);
+                    this.currentToken.type = ValidTokens.DOT;
                     break;
                 case "\"":
-                    this.currentToken.setType(ValidTokens.DQOT);
+                    this.currentToken.type = ValidTokens.DQOT;
                     break;
                 case "'":
-                    this.currentToken.setType(ValidTokens.SQOT);
+                    this.currentToken.type = ValidTokens.SQOT;
                     break;
 
                 // Opérateurs arithmétiques
                 case "=":
-                    this.currentToken.setType(ValidTokens.ASSIGN);
+                    this.currentToken.type = ValidTokens.ASSIGN;
                     break;
                 case "+":
-                    this.currentToken.setType(ValidTokens.PLUS);
+                    this.currentToken.type = ValidTokens.PLUS;
                     break;
                 case "-":
-                    this.currentToken.setType(ValidTokens.MINUS);
+                    this.currentToken.type = ValidTokens.MINUS;
                     break;
                 case "*":
-                    this.currentToken.setType(ValidTokens.MUL);
+                    this.currentToken.type = ValidTokens.MUL;
                     break;
                 case "/":
-                    this.currentToken.setType(ValidTokens.DIV);
+                    this.currentToken.type = ValidTokens.DIV;
                     break;
                 case "%":
-                    this.currentToken.setType(ValidTokens.MOD);
+                    this.currentToken.type = ValidTokens.MOD;
                     break;
                 case "&":
-                    this.currentToken.setType(ValidTokens.AMP);
+                    this.currentToken.type = ValidTokens.AMP;
                     break;
 
                 // Comparateurs
                 case "<":
-                    this.currentToken.setType(ValidTokens.LT);
+                    this.currentToken.type = ValidTokens.LT;
                     break;
                 case ">":
-                    this.currentToken.setType(ValidTokens.GT);
+                    this.currentToken.type = ValidTokens.GT;
                     break;
 
                 // Opérateurs logiques
                 case "!":
-                    this.currentToken.setType(ValidTokens.NOT);
+                    this.currentToken.type = ValidTokens.NOT;
                     break;
                 // Lorsqu'un caractère inconnu a été détecté,
                 // On lève une erreur
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
-            System.out.println("Current token type: " + this.currentToken.getType());
-            this.currentToken.setLine(line);
+            System.out.println("Current token type: " + this.currentToken.type);
+            this.currentToken.line = line ;
         }
 
         // Si le token est numérique
@@ -302,15 +286,15 @@ public class LexicalAnalysis {
             // (le caractère de fermeture éventuel n'est pas consommé ici,
             // il sera lu comme son propre token au prochain appel)
             else {
-                this.currentToken.setType(ValidTokens.CONST);
-                this.currentToken.setValeur(Integer.parseInt(tokenBuilder.toString()));
+                this.currentToken.type = ValidTokens.CONST;
+                this.currentToken.valeur = Integer.parseInt(tokenBuilder.toString());
             }
-            this.currentToken.setLine(line);
+            this.currentToken.line = line;
 
             // Pour tester
-            System.out.println("Token found: " + this.currentToken.getType());
-            if (this.currentToken.getType() == ValidTokens.CONST) {
-                System.out.println("with value: " + this.currentToken.getValeur());
+            System.out.println("Token found: " + this.currentToken.type);
+            if (this.currentToken.type == ValidTokens.CONST) {
+                System.out.println("with value: " + this.currentToken.valeur);
             }
         }
 
@@ -332,48 +316,48 @@ public class LexicalAnalysis {
             // Détection de mots clés
             switch (charToken) {
                 case "if":
-                    this.currentToken.setType(ValidTokens.IF);
+                    this.currentToken.type = ValidTokens.IF;
                     break;
                 case "else":
-                    this.currentToken.setType(ValidTokens.ELSE);
+                    this.currentToken.type = ValidTokens.ELSE;
                     break;
                 case "for":
-                    this.currentToken.setType(ValidTokens.FOR);
+                    this.currentToken.type = ValidTokens.FOR;
                     break;
                 case "while":
-                    this.currentToken.setType(ValidTokens.WHILE);
+                    this.currentToken.type = ValidTokens.WHILE;
                     break;
                 case "do":
-                    this.currentToken.setType(ValidTokens.DO);
+                    this.currentToken.type = ValidTokens.DO;
                     break;
                 case "int":
-                    this.currentToken.setType(ValidTokens.INT);
+                    this.currentToken.type = ValidTokens.INT;
                     break;
                 case "void":
-                    this.currentToken.setType(ValidTokens.VOID);
+                    this.currentToken.type = ValidTokens.VOID;
                     break;
                 case "continue":
-                    this.currentToken.setType(ValidTokens.CONTINUE);
+                    this.currentToken.type = ValidTokens.CONTINUE;
                     break;
                 case "break":
-                    this.currentToken.setType(ValidTokens.BREAK);
+                    this.currentToken.type = ValidTokens.BREAK;
                     break;
                 case "return":
-                    this.currentToken.setType(ValidTokens.RETURN);
+                    this.currentToken.type = ValidTokens.RETURN;
                     break;
                 default:
                     // Aucun mot-clé reconnu : on considère qu'il s'agit d'un identificateur
-                    this.currentToken.setType(ValidTokens.IDENT);
-                    this.currentToken.setIdent(charToken);
+                    this.currentToken.type = ValidTokens.IDENT;
+                    this.currentToken.ident = charToken;
                     break;
             }
 
-            this.currentToken.setLine(line);
+            this.currentToken.line = line;
 
             // Pour tester
-            System.out.println("Token found: " + this.currentToken.getType());
-            if (this.currentToken.getType() == ValidTokens.IDENT) {
-                System.out.println("with value: " + this.currentToken.getIdent());
+            System.out.println("Token found: " + this.currentToken.type);
+            if (this.currentToken.type == ValidTokens.IDENT) {
+                System.out.println("with value: " + this.currentToken.ident);
             }
         }
 
@@ -383,7 +367,7 @@ public class LexicalAnalysis {
         }
     }
     boolean check(ValidTokens type){
-        if (currentToken.getType() == type) {
+        if (currentToken.type == type) {
             next();
             return true;
         }
@@ -392,9 +376,9 @@ public class LexicalAnalysis {
     }
 
     void accept(ValidTokens type) throws LexicalException {
-        if (currentToken.getType() != type) {
+        if (currentToken.type != type) {
             throw new LexicalException(
-                    String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.getType(), this.line)
+                    String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.type, this.line)
             );
         }
     }

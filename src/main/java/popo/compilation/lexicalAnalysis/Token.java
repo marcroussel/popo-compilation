@@ -1,10 +1,10 @@
 package popo.compilation.lexicalAnalysis;
 
 public class Token {
-    ValidTokens type;
-    int valeur;
-    String ident; // Pour stocker le nom de la variable (si on détecte une variable)
-    int line;
+    public ValidTokens type;
+    public int valeur;
+    public String ident; // Pour stocker le nom de la variable (si on détecte une variable)
+    public int line;
 
     /**
      * Constructeur par défaut
@@ -38,41 +38,9 @@ public class Token {
      * @param token le Token à copier
      */
     public Token(Token token) {
-        this.type = token.getType();
-        this.valeur = token.getValeur();
-        this.ident = token.getIdent();
-        this.line = token.getLine();
-    }
-
-    public ValidTokens getType() {
-        return type;
-    }
-
-    public void setType(ValidTokens type) {
-        this.type = type;
-    }
-
-    public int getValeur() {
-        return valeur;
-    }
-
-    public void setValeur(int valeur) {
-        this.valeur = valeur;
-    }
-
-    public String getIdent() {
-        return ident;
-    }
-
-    public void setIdent(String ident) {
-        this.ident = ident;
-    }
-
-    public int getLine() {
-        return line;
-    }
-
-    public void setLine(int line) {
-        this.line = line;
+        this.type = token.type;
+        this.valeur = token.valeur;
+        this.ident = token.ident;
+        this.line = token.line;
     }
 }

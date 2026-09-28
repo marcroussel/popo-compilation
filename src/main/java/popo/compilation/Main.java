@@ -1,13 +1,19 @@
 package popo.compilation;
 
-import popo.compilation.lexicalAnalysis.LexicalAnalysis;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
+import popo.compilation.CodeGenerator.CodeGenerator;
+import popo.compilation.lexicalAnalysis.LexicalAnalysis;
+import popo.compilation.lexicalAnalysis.ValidTokens;
+
+
 public class Main {
+
+    public static CodeGenerator codeGenerator;
+
     public static void main(String[] args) {
 
         // Lecture du fichier de test C, en mode flux (buffer)
@@ -22,8 +28,21 @@ public class Main {
             }
             String code = builder.toString();
             LexicalAnalysis lexicalAnalysis = new LexicalAnalysis(code);
+            
+            
+            
+            
             lexicalAnalysis.init();
 
+
+
+
+
+
+
+            while (lexicalAnalysis.currentToken.type != ValidTokens.EOS) {
+                codeGenerator.gencode();
+            }
         } catch (Exception e) {
             System.out.println("ERROR : " + e.toString());
         }
