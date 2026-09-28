@@ -63,6 +63,7 @@ public class LexicalAnalysis {
      * Initialise l'analyse lexicale
      */
     public void init() {
+        // prend un nom de fichier source et initialise l'analyse lexicale
         System.out.println("Construction des Tokens");
         setCurrentToken(new Token(null, 0, 0));
 
