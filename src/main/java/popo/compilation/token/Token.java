@@ -7,6 +7,16 @@ public class Token {
     public int line;
 
     /**
+     * Constructeur vide
+     */
+    public Token() {
+        this.type = null;
+        this.valeur = 0;
+        this.ident = null;
+        this.line = 1;
+    }
+
+    /**
      * Constructeur par défaut
      * @param type
      * @param valeur

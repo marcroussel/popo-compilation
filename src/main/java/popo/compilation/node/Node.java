@@ -1,7 +1,7 @@
 package popo.compilation.node;
 
 public class Node {
-    public ValidNode type;
+    public int type; // TODO : Changer le type en ValidToken
     public String value;
     public String Ident;    // si ValidNode.IDENT
 
@@ -11,22 +11,22 @@ public class Node {
     public Node[] children;
 
     public Node(int type) {
-        this.type = ValidNode.;
+        this.type = type;
     }
 
     public Node (int type, int valeur) {
-        this.type = ValidNode.;
-        this.value = ;
+        this.type = type;
+        this.value = String.valueOf(valeur);
     }
 
     public Node (int type, Node child1) {
-        this.type = ValidNode.;
+        this.type = type;
         this.nbChildren = 1;
         this.children = new Node[]{child1};
     }
 
     public Node (int type, Node child1, Node child2) {
-        this.type = ValidNode.;
+        this.type = type;
         this.nbChildren = 2;
         this.children = new Node[]{child1, child2};
     }

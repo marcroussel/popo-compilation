@@ -12,9 +12,10 @@ public class CodeGenerator {
     }
 
     public Node gencode() {
-        Node A = this.semanticAnalysis.AnaSem();
+        Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
 
         // Génération de code à venir
+        return A;
     }
 }
     

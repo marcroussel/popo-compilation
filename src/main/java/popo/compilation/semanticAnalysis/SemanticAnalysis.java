@@ -12,7 +12,7 @@ public class SemanticAnalysis {
     }
     
     public Node AnaSem() {
-        Node A = this.syntaxAnalysis.AnaSyntax(); // Génération de l'analyse syntaxique
+        Node A = this.syntaxAnalysis.AnaSyntax(); // Génération de l'arbre d'analyse syntaxique
         return A;
     }
 }
