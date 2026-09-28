@@ -1,10 +1,14 @@
-package popo.compilation.lexicalAnalysis;
+package popo.compilation.SyntaxAcceptor;
 import java.util.ArrayList;
 
-public class LexicalAcceptor {
+import popo.compilation.lexicalAnalysis.LexicalException;
+import popo.compilation.lexicalAnalysis.Token;
+import popo.compilation.lexicalAnalysis.ValidTokens;
+
+public class SyntaxAcceptor {
     ArrayList<Token> tokens;
 
-    public LexicalAcceptor(ArrayList<Token> tokens) {
+    public SyntaxAcceptor(ArrayList<Token> tokens) {
         this.tokens = tokens;
     }
 
