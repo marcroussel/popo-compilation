@@ -67,7 +67,7 @@ public class LexicalAnalysis {
 
         while (charPos < source.length() && getCurrentToken().getType() != ValidTokens.EOS) {
             System.out.println("");
-            nextToken();
+            next();
         }
     }
 
@@ -134,7 +134,7 @@ public class LexicalAnalysis {
      * Gère correctement les tokens multi-caractères comme ==, !=, <=, >=, &&, ||
      * ainsi que les caractères alphanumériques
      */
-    public void nextToken() {
+    public void next() {
         setLastToken(new Token(getCurrentToken()));
 
         skipSpaces();
@@ -373,6 +373,23 @@ public class LexicalAnalysis {
         // Pour tous les autres cas
         else {
             throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", firstChar, this.line));
+        }
+    }
+
+    boolean check(ValidTokens type){
+        if (currentToken.getType() == type) {
+            next();
+            return true;
+        }
+
+        return false;
+    }
+
+    void accept(ValidTokens type) throws LexicalException {
+        if (currentToken.getType() != type) {
+            throw new LexicalException(
+                    String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.getType(), this.line)
+            );
         }
     }
 }
