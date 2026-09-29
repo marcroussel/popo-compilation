@@ -263,12 +263,15 @@ public class LexicalAnalysis {
             while (charPos < source.length() && Character.isDigit(peekNextChar())) {
                 tokenBuilder.append(advanceChar());
             }
+            // inutille pour le moment :
+
             // On lève une erreur si le caractère suivant n'est ni un espace,
             // ni un caractère de fermeture (';', ')', ... ), ni la fin du flux
-            char afterDigits = peekNextChar();
-            if (!Character.isWhitespace(afterDigits) && afterDigits != '\0' && !CLOSING_CHARS.contains(afterDigits)) {
-                throw new LexicalException(String.format("Invalid token: '%s' at line %d", tokenBuilder.toString(), this.line));
-            }
+            
+            // char afterDigits = peekNextChar();
+            // if (!Character.isWhitespace(afterDigits) && afterDigits != '\0' && !CLOSING_CHARS.contains(afterDigits)) {
+            //     throw new LexicalException(String.format("Invalid token: '%s' at line %d", tokenBuilder.toString(), this.line));
+            // }
 
             // Sinon, on a bien une valeur numérique valide
             // (le caractère de fermeture éventuel n'est pas consommé ici,
