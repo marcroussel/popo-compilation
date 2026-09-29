@@ -1,9 +1,5 @@
 package popo.compilation.lexicalAnalysis;
 
-import popo.compilation.node.Node;
-import popo.compilation.token.Token;
-import popo.compilation.token.ValidTokens;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +10,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import popo.compilation.token.Token;
+import popo.compilation.token.ValidTokens;
 
 
 public class LexicalAnalysis {
@@ -69,46 +68,11 @@ public class LexicalAnalysis {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    /**
-     * Initie l'analyse lexicale
-     * @return l'arbre de tokens après analyse lexicale.
-     */
-    public Node AnaLexic() {
+        
+        // Initialiser les tokens par défaut
         this.currentToken = new Token();
-        next();
-
-        return null; // Temporaire
+        this.lastToken = new Token();
     }
-
-    /**
-     * Lit le fichier source et le convertit en String.
-     * Cherche d'abord sur le système de fichiers (cas d'un chemin passé en argument
-     * de l'exécutable), puis dans le classpath (ex: "/samples/petit_test.c",
-     * qui se trouve dans src/main/resources).
-     * @param sourceFileName : Le chemin vers le fichier source
-     * @return Le contenu du fichier
-     */
-    /*
-    private static String readSource(String sourceFileName) {
-        try {
-            Path path = Path.of(sourceFileName);
-            if (Files.isRegularFile(path)) {
-                return Files.readString(path, StandardCharsets.UTF_8);
-            }
-
-            try (InputStream inputStream = LexicalAnalysis.class.getResourceAsStream(sourceFileName)) {
-                if (inputStream == null) {
-                    throw new FileNotFoundException("Source file not found: " + sourceFileName);
-                }
-                return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-     */
 
     /**
      * Renvoie le caractère suivant sans avancer la position, sans le consommer.
@@ -175,9 +139,6 @@ public class LexicalAnalysis {
      */
     public void next() {
 
-        // Sauvegarde de l'ancien token
-        this.lastToken = new Token(this.currentToken);
-
         skipSpaces();
 
         // Si fin du flux source détecté,
@@ -192,8 +153,6 @@ public class LexicalAnalysis {
         tokenBuilder.append(firstChar);
 
         if (!isAlphaNumericChar(firstChar)) {
-            System.out.println("Non alphanumeric token detected");
-
             // Si le premier caractère est un opérateur ou délimiteur, vérifier si c'est une combinaison de 2 caractères
             // en utilisant peekNextChar() pour les cas nécessitant de regarder le caractère suivant
             // ex: '=' seul vs '==', '<' seul vs '<=', etc.
@@ -208,27 +167,10 @@ public class LexicalAnalysis {
                 this.currentToken.type = twoCharTokenType;
                 this.currentToken.line = line;
 
-                System.out.println("Pos:" + this.charPos + " Line:" + this.line);
-                System.out.println("Token found: " + tokenBuilder.toString());
-
                 return;
             }
 
-            // TODO : Potentiellement à retirer - À confirmer avec le prof
-            // Cas spécial : si c'est un point suivi d'un chiffre, c'est un nombre décimal
-            /*
-            else if (firstChar == '.' && Character.isDigit(nextChar)) {
-                // Consommer le point et les chiffres suivants
-                while (charPos < source.length() && Character.isDigit(peekNextChar())) {
-                    tokenBuilder.append(advanceChar());
-                }
-            }
-             */
-
             String token = tokenBuilder.toString();
-
-            System.out.println("Pos:" + this.charPos + " Line:" + this.line);
-            System.out.println("Token found: " + token);
 
             // Lecture des tokens simples (caractères uniques et identifiants)
             switch (token) {
@@ -312,19 +254,15 @@ public class LexicalAnalysis {
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
-            System.out.println("Current token type: " + this.currentToken.type);
             this.currentToken.line = line ;
         }
 
         // Si le token est numérique
         else if (Character.isDigit(firstChar)) {
-            System.out.println("Digital token detected");
-
             // Récupération de tous les chiffres de la valeur numérique
             while (charPos < source.length() && Character.isDigit(peekNextChar())) {
                 tokenBuilder.append(advanceChar());
             }
-
             // On lève une erreur si le caractère suivant n'est ni un espace,
             // ni un caractère de fermeture (';', ')', ... ), ni la fin du flux
             char afterDigits = peekNextChar();
@@ -335,24 +273,13 @@ public class LexicalAnalysis {
             // Sinon, on a bien une valeur numérique valide
             // (le caractère de fermeture éventuel n'est pas consommé ici,
             // il sera lu comme son propre token au prochain appel)
-            else {
-                this.currentToken.type = ValidTokens.CONST;
-                this.currentToken.valeur = Integer.parseInt(tokenBuilder.toString());
-            }
+            this.currentToken.type = ValidTokens.CONST;
+            this.currentToken.valeur = Integer.parseInt(tokenBuilder.toString());
             this.currentToken.line = line;
-
-            // Pour tester
-            System.out.println("Token found: " + this.currentToken.type);
-            if (this.currentToken.type == ValidTokens.CONST) {
-                System.out.println("with value: " + this.currentToken.valeur);
-            }
         }
 
         // Si le token est alphabétique
         else if (Character.isAlphabetic(firstChar)) {
-
-            System.out.println("Alphabetic token detected");
-
             // Récupération des autres caractères, tant qu'ils sont alphanumériques
             // ou des underscores
             while (charPos < source.length() && isAlphaNumericChar(peekNextChar())) {
@@ -360,8 +287,6 @@ public class LexicalAnalysis {
             }
 
             String charToken = tokenBuilder.toString();
-
-            System.out.println("Total token found: " + charToken);
 
             // Détection de mots clés
             switch (charToken) {
@@ -403,17 +328,17 @@ public class LexicalAnalysis {
             }
 
             this.currentToken.line = line;
-
-            // Pour tester
-            System.out.println("Token found: " + this.currentToken.type);
-            if (this.currentToken.type == ValidTokens.IDENT) {
-                System.out.println("with value: " + this.currentToken.ident);
-            }
         }
-
         // Pour tous les autres cas
         else {
             throw new LexicalException(String.format("Unrecognized character: '%c' at line %d", firstChar, this.line));
+        }
+
+        try {
+        // Sauvegarde de l'ancien token
+            this.lastToken = new Token(this.currentToken);
+        } catch (Exception e) {
+            throw new LexicalException(String.format("Error processing token at line %d", this.line));
         }
     }
 
@@ -442,5 +367,6 @@ public class LexicalAnalysis {
                     String.format("Token '%s' expected, but '%s' found at line %d", type, currentToken.type, this.line)
             );
         }
+        next(); // Consomme le token suivant après l'acceptation
     }
 }

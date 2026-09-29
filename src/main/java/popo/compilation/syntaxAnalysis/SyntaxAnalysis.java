@@ -2,6 +2,7 @@ package popo.compilation.syntaxAnalysis;
 
 import popo.compilation.lexicalAnalysis.LexicalAnalysis;
 import popo.compilation.node.Node;
+import popo.compilation.node.ValidNode;
 import popo.compilation.token.ValidTokens;
 
 public class SyntaxAnalysis {
@@ -13,25 +14,24 @@ public class SyntaxAnalysis {
     }
 
     public Node AnaSyntax() {
-        Node A = this.lexicalAnalysis.AnaLexic(); // Génération de l'arbre d'analyse lexicale
+        Node A = this.F(); // Génération de l'arbre d'analyse lexicale
         return A;
     }
 
-    Node F( ... /*En fonction du type, mettre les param corrects */ ... ) {
-        Node nIns = I( ... );
+    Node F() {
+        Node nIns = I();
         return nIns;
     }
 
 
-    Node I(...) {
+    Node I() {
         Node nExp = E(); // Parser le contenu de E
-
         this.lexicalAnalysis.accept(ValidTokens.SEMI); // "Manger" le token ";"
 
         return nExp;
     }
 
-    Node E(...) {
+    Node E() {
         Node sousArbre = A();
         return sousArbre;
     }
@@ -44,7 +44,7 @@ public class SyntaxAnalysis {
         // Constante (A)
         // TODO : nd_const à définir
         if (this.lexicalAnalysis.check(ValidTokens.CONST)) {
-            return new Node(nd_const, this.lexicalAnalysis.lastToken.valeur); // On doit dans tous les cas renvoyer un arbre
+            return new Node(ValidNode.ValidTypes.get("CONST"), this.lexicalAnalysis.lastToken.valeur); // On doit dans tous les cas renvoyer un arbre
         }
 
         // ( E )

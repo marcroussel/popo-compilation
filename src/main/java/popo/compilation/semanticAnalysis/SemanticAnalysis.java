@@ -1,5 +1,4 @@
 package popo.compilation.semanticAnalysis;
-
 import popo.compilation.node.Node;
 import popo.compilation.syntaxAnalysis.SyntaxAnalysis;
 
