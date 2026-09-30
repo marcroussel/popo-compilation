@@ -5,11 +5,12 @@ import java.util.HashMap;
 import popo.compilation.token.ValidTokens;
 
 public class ValidNode {
-    public static HashMap<String, Integer> ValidTypes = new HashMap<>();
+    public static final HashMap<String, Integer> ValidTypes = new HashMap<>();
     static {
         ValidTypes.put("CONST", 0);
         ValidTypes.put("PLUS", 1);
         ValidTypes.put("MINUS", 2);
+        ValidTypes.put("UNARY_MINUS", 30);
         ValidTypes.put("MUL", 3);
         ValidTypes.put("DIV", 4);
         ValidTypes.put("MOD", 5);
@@ -24,7 +25,7 @@ public class ValidNode {
         ValidTypes.put("OR", 14);
         ValidTypes.put("NOT", 15);
     }
-    public static HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
+    public static final HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
     static {
         //Prio : 7
         OP.put(ValidTokens.MUL, new NodeInfo(ValidTokens.MUL, 7, 1, 3));
@@ -53,6 +54,7 @@ public class ValidNode {
         
         //Prio : 1
         OP.put(ValidTokens.ASSIGN, new NodeInfo(ValidTokens.ASSIGN, 1, 1, 12));
+        OP.put(ValidTokens.CONST, new NodeInfo(ValidTokens.CONST, 1, 1, 0));
     }
 
     /**

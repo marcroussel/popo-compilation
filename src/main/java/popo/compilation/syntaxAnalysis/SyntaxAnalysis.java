@@ -39,7 +39,9 @@ public class SyntaxAnalysis {
     public Node EE(int pmin) {
         Node a1 = P();
         while (true) {
+            System.out.println("Current token type: " + this.lexicalAnalysis.currentToken.type);
             NodeInfo op = ValidNode.OP.get(this.lexicalAnalysis.currentToken.type);
+            System.out.println("Current operator: " + (op != null ? op.NodeType : "null"));
             if (op == null || op.priority < pmin) {
                 break;
             }
@@ -55,7 +57,7 @@ public class SyntaxAnalysis {
         // Cas où l'on détectera un moins unaire
         if (this.lexicalAnalysis.check(ValidTokens.MINUS)) {
             Node p = P();
-            return new Node(ValidNode.ValidTypes.get("MINUS"), p);
+            return new Node(ValidNode.ValidTypes.get("UNARY_MINUS"), p);
         }
 
         // Cas où l'on détectera un token Not

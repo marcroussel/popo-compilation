@@ -10,7 +10,7 @@ public class CodeGenerator {
 
     public SemanticAnalysis semanticAnalysis;
     //Map
-    public static HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
+    public static final HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
     static {
         InstructionSimples.put(-1, new SimpleInstruction(0, "", "dbg"));
         InstructionSimples.put(0, new SimpleInstruction(0, "", "push"));
@@ -31,15 +31,18 @@ public class CodeGenerator {
     }
 
     public void genNode(Node N) {
-        if( ValidNode.OP.get(N.type) != null) {
-		System.out.println(InstructionSimples.get(N.type).prefixe);
-		for (int i = 0; i < N.nbChildren; i++) {
-			genNode(N.children.get(i));
-		}
-		System.out.println(InstructionSimples.get(N.type).suffixe);
-	}
+        if(ValidNode.OP.get(N.type) != null) {
+            System.out.println(InstructionSimples.get(N.type).prefixe);
+            for (int i = 0; i < N.nbChildren; i++) {
+                genNode(N.children.get(i));
+            }
+            System.out.println(InstructionSimples.get(N.type).suffixe);
+        }
         switch (N.type) {
-
+            case 1000:
+                break;
+            case 1001:
+                break;
             default:
                 throw new CodeGenException("");
         }
