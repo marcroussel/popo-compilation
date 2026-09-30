@@ -39,19 +39,13 @@ public class SyntaxAnalysis {
     public Node EE(int pmin) {
         Node a1 = P();
         while (true) {
-            NodeInfo op = new NodeInfo();
-            for (ValidTokens token : ValidNode.OP.keySet()) {
-                if (this.lexicalAnalysis.currentToken.type == ValidNode.OP.get(token).TokenType) {
-                    op = ValidNode.OP.get(token);
-                    break;
-                }
-            }
-            if (op.TokenType == null || op.priority < pmin) {
+            NodeInfo op = ValidNode.OP.get(this.lexicalAnalysis.currentToken.type);
+            if (op == null || op.priority < pmin) {
                 break;
             }
             this.lexicalAnalysis.next();
             Node a2 = EE(op.priority + op.associativity);
-            a1 = new Node(op.TokenType.ordinal(), a1, a2);
+            a1 = new Node(op.NodeType, a1, a2);
         }
         return a1;
     }
@@ -70,7 +64,7 @@ public class SyntaxAnalysis {
             return new Node(ValidNode.ValidTypes.get("NOT"), p);
         }
 
-        Node s = null;
+        Node s = null; // S()
 
         return s;
     }
