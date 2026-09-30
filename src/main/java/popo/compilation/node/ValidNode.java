@@ -3,6 +3,8 @@ package popo.compilation.node;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import popo.compilation.token.ValidTokens;
+
 public class ValidNode {
     public static HashMap<String, Integer> ValidTypes = new HashMap<>();
     static {
@@ -52,8 +54,49 @@ public class ValidNode {
         
         //Prio : 1
         ValidNodeInfos.add(new NodeInfo(ValidTypes.get("ASSIGN"), 1, 1, 12));
-    
     }
 
+    /**
+     * Recherche un NodeInfo à partir de son TokenType (cf. ValidTypes).
+     * @return le NodeInfo correspondant, ou null si aucun opérateur ne matche (ex: token non-opérateur comme ')' ou ';')
+     */
+    public static NodeInfo getByTokenType(int tokenType) {
+        for (NodeInfo info : ValidNodeInfos) {
+            if (info.TokenType == tokenType) {
+                return info;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Recherche un NodeInfo à partir du nom du ValidType (ex: "PLUS", "MUL", ...).
+     */
+    public static NodeInfo getByValidType(String validType) {
+        Integer tokenType = ValidTypes.get(validType);
+        if (tokenType == null) {
+            return null;
+        }
+        return getByTokenType(tokenType);
+    }
+
+    /**
+     * Recherche un NodeInfo à partir du ValidTokens courant (typiquement courant.type dans l'analyse syntaxique).
+     */
+    public static NodeInfo getByValidType(ValidTokens tokenType) {
+        return getByValidType(tokenType.name());
+    }
+
+    /**
+     * Recherche un NodeInfo à partir de son NodeType.
+     */
+    public static NodeInfo getByNodeType(int nodeType) {
+        for (NodeInfo info : ValidNodeInfos) {
+            if (info.NodeType == nodeType) {
+                return info;
+            }
+        }
+        return null;
+    }
 
 }

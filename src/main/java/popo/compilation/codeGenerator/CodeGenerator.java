@@ -27,6 +27,8 @@ public class CodeGenerator {
             //    printf("add");   Le reste c'est pour après
             //    break;
 
+
+
             default:
                 throw new CodeGenException("");
         }
