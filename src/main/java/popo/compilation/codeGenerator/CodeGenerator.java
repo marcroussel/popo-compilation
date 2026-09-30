@@ -33,7 +33,10 @@ public class CodeGenerator {
 
     public void genNode(Node N) {
         if(InstructionSimples.containsKey(N.type)) {
-            System.out.println(InstructionSimples.get(N.type).prefixe);
+            String prefixe = InstructionSimples.get(N.type).prefixe;
+            if (prefixe != null && !prefixe.isEmpty()) {
+                System.out.println(prefixe);
+            }
             for (int i = 0; i < N.nbChildren; i++) {
                 genNode(N.children.get(i));
             }
