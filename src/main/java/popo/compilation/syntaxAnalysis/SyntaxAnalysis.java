@@ -39,9 +39,7 @@ public class SyntaxAnalysis {
     public Node EE(int pmin) {
         Node a1 = P();
         while (true) {
-            System.out.println("Current token type: " + this.lexicalAnalysis.currentToken.type);
             NodeInfo op = ValidNode.OP.get(this.lexicalAnalysis.currentToken.type);
-            System.out.println("Current operator: " + (op != null ? op.NodeType : "null"));
             if (op == null || op.priority < pmin) {
                 break;
             }
@@ -65,6 +63,13 @@ public class SyntaxAnalysis {
             Node p = P();
             return new Node(ValidNode.ValidTypes.get("NOT"), p);
         }
+
+        // Cas où l'on détectera une Constante
+        if (this.lexicalAnalysis.check(ValidTokens.CONST)) {
+            return new Node(ValidNode.ValidTypes.get("CONST"), this.lexicalAnalysis.lastToken.valeur);
+        }
+
+        
 
         Node s = null; // S()
 

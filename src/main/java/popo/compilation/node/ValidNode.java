@@ -56,48 +56,4 @@ public class ValidNode {
         OP.put(ValidTokens.ASSIGN, new NodeInfo(ValidTokens.ASSIGN, 1, 1, 12));
         OP.put(ValidTokens.CONST, new NodeInfo(ValidTokens.CONST, 1, 1, 0));
     }
-
-    /**
-     * Recherche un NodeInfo à partir de son TokenType (cf. ValidTypes).
-     * @return le NodeInfo correspondant, ou null si aucun opérateur ne matche (ex: token non-opérateur comme ')' ou ';')
-     */
-    public static NodeInfo getByTokenType(int tokenType) {
-        for (NodeInfo info : OP.values()) {
-            if (info.TokenType == ValidTokens.values()[tokenType]) {
-                return info;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Recherche un NodeInfo à partir du nom du ValidType (ex: "PLUS", "MUL", ...).
-     */
-    public static NodeInfo getByValidType(String validType) {
-        Integer tokenType = ValidTypes.get(validType);
-        if (tokenType == null) {
-            return null;
-        }
-        return getByTokenType(tokenType);
-    }
-
-    /**
-     * Recherche un NodeInfo à partir du ValidTokens courant (typiquement courant.type dans l'analyse syntaxique).
-     */
-    public static NodeInfo getByValidType(ValidTokens tokenType) {
-        return getByValidType(tokenType.name());
-    }
-
-    /**
-     * Recherche un NodeInfo à partir de son NodeType.
-     */
-    public static NodeInfo getByNodeType(int nodeType) {
-        for (NodeInfo info : OP.values()) {
-            if (info.NodeType == nodeType) {
-                return info;
-            }
-        }
-        return null;
-    }
-
 }

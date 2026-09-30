@@ -3,16 +3,16 @@ package popo.compilation.codeGenerator;
 import java.util.HashMap;
 
 import popo.compilation.node.Node;
-import popo.compilation.node.ValidNode;
 import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
 
+    public static final int DBG_CODE_VALUE = -1;
     public SemanticAnalysis semanticAnalysis;
     //Map
     public static final HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
     static {
-        InstructionSimples.put(-1, new SimpleInstruction(0, "", "dbg"));
+        InstructionSimples.put(DBG_CODE_VALUE, new SimpleInstruction(DBG_CODE_VALUE, "", "dbg"));
         InstructionSimples.put(0, new SimpleInstruction(0, "", "push"));
         InstructionSimples.put(1, new SimpleInstruction(1, "", "add"));
         InstructionSimples.put(2, new SimpleInstruction(2, "", "sub"));
@@ -31,20 +31,19 @@ public class CodeGenerator {
     }
 
     public void genNode(Node N) {
-        if(ValidNode.OP.get(N.type) != null) {
+        if(N != null && InstructionSimples.containsKey(N.type)) {
             System.out.println(InstructionSimples.get(N.type).prefixe);
             for (int i = 0; i < N.nbChildren; i++) {
                 genNode(N.children.get(i));
             }
-            System.out.println(InstructionSimples.get(N.type).suffixe);
+            System.out.println(InstructionSimples.get(N.type).suffixe + " " + (N.value != null ? N.value : ""));
         }
-        switch (N.type) {
-            case 1000:
-                break;
-            case 1001:
-                break;
-            default:
-                throw new CodeGenException("");
+        try {
+            switch (N.type) {
+                default:
+                    throw new CodeGenException("Caca");
+            }
+        } catch (Exception e) {
         }
     }
 }
