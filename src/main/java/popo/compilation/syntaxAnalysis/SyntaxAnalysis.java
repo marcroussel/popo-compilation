@@ -2,6 +2,7 @@ package popo.compilation.syntaxAnalysis;
 
 import popo.compilation.lexicalAnalysis.LexicalAnalysis;
 import popo.compilation.node.Node;
+import popo.compilation.node.NodeInfo;
 import popo.compilation.node.ValidNode;
 import popo.compilation.token.ValidTokens;
 
@@ -31,23 +32,28 @@ public class SyntaxAnalysis {
         return nExp;
     }
 
-    public Node E(int pmin) {
+    public Node E() {
+        return EE(0);
+    }
+
+    public Node EE(int pmin) {
         Node a1 = P();
-        // while (OP[courant.type] != null) {
-        while (ValidNode.ValidNodeInfos.get()) // Tu en es là bg
-            op = OP[courant.type];
-            if (op.hasPrio(pmin)) {
+        while (true) {
+            NodeInfo op = new NodeInfo();
+            for (ValidTokens token : ValidNode.OP.keySet()) {
+                if (this.lexicalAnalysis.currentToken.type == ValidNode.OP.get(token).TokenType) {
+                    op = ValidNode.OP.get(token);
+                    break;
+                }
+            }
+            if (op.TokenType == null || op.priority < pmin) {
                 break;
             }
             this.lexicalAnalysis.next();
-            Node a2 = EE(op.prio++); // On cherche des opérateurs plus prioritaires que l'opérateur actuel
-            a1 = node_2(op.nd, a1, a2); // On crée un noeud de l'opérateur avec comme enfants a1 et a2
+            Node a2 = EE(op.priority + op.associativity);
+            a1 = new Node(op.TokenType.ordinal(), a1, a2);
         }
         return a1;
-    }
-
-    public Node E() {
-        return E(0);
     }
 
     public Node P() {
@@ -55,13 +61,16 @@ public class SyntaxAnalysis {
         // Cas où l'on détectera un moins unaire
         if (this.lexicalAnalysis.check(ValidTokens.MINUS)) {
             Node p = P();
-            return new Node(nd_moins_un, p);
+            return new Node(ValidNode.ValidTypes.get("MINUS"), p);
         }
 
-        // Même chose pour le token Not
+        // Cas où l'on détectera un token Not
+        if (this.lexicalAnalysis.check(ValidTokens.NOT)) {
+            Node p = P();
+            return new Node(ValidNode.ValidTypes.get("NOT"), p);
+        }
 
-        // Cas pour un chiffre
-        Node s = S();
+        Node s = null;
 
         return s;
     }
@@ -73,7 +82,6 @@ public class SyntaxAnalysis {
         // Mais si ça renvoie false, on consomme pas
 
         // Constante (A)
-        // TODO : nd_const à définir
         if (this.lexicalAnalysis.check(ValidTokens.CONST)) {
             return new Node(ValidNode.ValidTypes.get("CONST"), this.lexicalAnalysis.lastToken.valeur); // On doit dans tous les cas renvoyer un arbre
         }

@@ -31,15 +31,15 @@ public class CodeGenerator {
     }
 
     public void genNode(Node N) {
-        if( ValidNode.ValidNodeInfos.get(N.type) != null) {
-		System.out.println(this.InstructionSimples.get(N.type).prefixe);
+        if( ValidNode.OP.get(N.type) != null) {
+		System.out.println(InstructionSimples.get(N.type).prefixe);
 		for (int i = 0; i < N.nbChildren; i++) {
 			genNode(N.children.get(i));
 		}
-		System.out.println(this.InstructionSimples.get(N.type).suffixe);
+		System.out.println(InstructionSimples.get(N.type).suffixe);
 	}
         switch (N.type) {
-            
+
             default:
                 throw new CodeGenException("");
         }
