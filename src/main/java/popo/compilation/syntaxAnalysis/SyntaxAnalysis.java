@@ -64,14 +64,7 @@ public class SyntaxAnalysis {
             return new Node(ValidNode.ValidTypes.get("NOT"), p);
         }
 
-        // Cas où l'on détectera une Constante
-        if (this.lexicalAnalysis.check(ValidTokens.CONST)) {
-            return new Node(ValidNode.ValidTypes.get("CONST"), this.lexicalAnalysis.lastToken.valeur);
-        }
-
-        
-
-        Node s = null; // S()
+        Node s = A();
 
         return s;
     }

@@ -26,24 +26,23 @@ public class CodeGenerator {
 
     public void genCode() {
         Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
-        // Génération de code à venir
+        // Génération de code
         genNode(A);
+        System.out.println(InstructionSimples.get(DBG_CODE_VALUE).suffixe + "\n");
     }
 
     public void genNode(Node N) {
-        if(N != null && InstructionSimples.containsKey(N.type)) {
+        if(InstructionSimples.containsKey(N.type)) {
             System.out.println(InstructionSimples.get(N.type).prefixe);
             for (int i = 0; i < N.nbChildren; i++) {
                 genNode(N.children.get(i));
             }
             System.out.println(InstructionSimples.get(N.type).suffixe + " " + (N.value != null ? N.value : ""));
         }
-        try {
+        else{
             switch (N.type) {
-                default:
-                    throw new CodeGenException("Caca");
+                default -> throw new CodeGenException("Unhandled node type: " + N.type);
             }
-        } catch (Exception e) {
         }
     }
 }
