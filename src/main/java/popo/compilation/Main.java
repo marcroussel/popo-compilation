@@ -17,6 +17,7 @@ public class Main {
         }
         System.out.println(".halt");
     }
+    
     public static void init(String filePath) {
         codeGenerator = new CodeGenerator(filePath);
         codeGenerator.semanticAnalysis.syntaxAnalysis.lexicalAnalysis.next();

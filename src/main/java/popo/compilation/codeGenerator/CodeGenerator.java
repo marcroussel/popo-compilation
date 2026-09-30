@@ -3,20 +3,21 @@ package popo.compilation.codeGenerator;
 import java.util.HashMap;
 
 import popo.compilation.node.Node;
-import popo.compilation.node.ValidNode;
 import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
 
+    public static final int DBG_CODE_VALUE = -1;
     public SemanticAnalysis semanticAnalysis;
     //Map
-    public static HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
+    public static final HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
     static {
-        InstructionSimples.put(-1, new SimpleInstruction(0, "", "dbg"));
+        InstructionSimples.put(DBG_CODE_VALUE, new SimpleInstruction(DBG_CODE_VALUE, "", "dbg"));
         InstructionSimples.put(0, new SimpleInstruction(0, "", "push"));
         InstructionSimples.put(1, new SimpleInstruction(1, "", "add"));
         InstructionSimples.put(2, new SimpleInstruction(2, "", "sub"));
         InstructionSimples.put(3, new SimpleInstruction(3, "", "mul"));
+        InstructionSimples.put(4, new SimpleInstruction(4, "", "div"));
         InstructionSimples.put(30, new SimpleInstruction(30, "push 0", "sub"));
     }
 
@@ -26,21 +27,26 @@ public class CodeGenerator {
 
     public void genCode() {
         Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
-        // Génération de code à venir
+        // Génération de code
         genNode(A);
+        System.out.println(InstructionSimples.get(DBG_CODE_VALUE).suffixe + "\n");
     }
 
     public void genNode(Node N) {
-        if( ValidNode.ValidNodeInfos.get(N.type) != null) {
-		System.out.println(this.InstructionSimples.get(N.type).prefixe);
-		for (int i = 0; i < N.nbChildren; i++) {
-			genNode(N.children.get(i));
-		}
-		System.out.println(this.InstructionSimples.get(N.type).suffixe);
-	}
-        switch (N.type) {
-            default:
-                throw new CodeGenException("");
+        if(InstructionSimples.containsKey(N.type)) {
+            String prefixe = InstructionSimples.get(N.type).prefixe;
+            if (prefixe != null && !prefixe.isEmpty()) {
+                System.out.println(prefixe);
+            }
+            for (int i = 0; i < N.nbChildren; i++) {
+                genNode(N.children.get(i));
+            }
+            System.out.println(InstructionSimples.get(N.type).suffixe + " " + (N.value != null ? N.value : ""));
+        }
+        else{
+            switch (N.type) {
+                default -> throw new CodeGenException("Unhandled node type: " + N.type);
+            }
         }
     }
 }
