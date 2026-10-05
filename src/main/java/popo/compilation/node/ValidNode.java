@@ -48,6 +48,7 @@ public class ValidNode {
         
         //Prio : 3
         OP.put(ValidTokens.AND, new NodeInfo(ValidTokens.AND, 3, 1, 13));
+        OP.put(ValidTokens.NOT, new NodeInfo(ValidTokens.NOT, 3, 1, 15));
         
         //Prio : 2
         OP.put(ValidTokens.OR, new NodeInfo(ValidTokens.OR, 2, 1, 14));

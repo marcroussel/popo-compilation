@@ -19,6 +19,16 @@ public class CodeGenerator {
         InstructionSimples.put(3, new SimpleInstruction(3, "", "mul"));
         InstructionSimples.put(4, new SimpleInstruction(4, "", "div"));
         InstructionSimples.put(5, new SimpleInstruction(5, "", "mod"));
+        InstructionSimples.put(6, new SimpleInstruction(6, "", "cmplt"));
+        InstructionSimples.put(7, new SimpleInstruction(7, "", "cmpgt"));
+        InstructionSimples.put(8, new SimpleInstruction(8, "", "cmple"));
+        InstructionSimples.put(9, new SimpleInstruction(9, "", "cmpge"));
+        InstructionSimples.put(10, new SimpleInstruction(10, "", "cmpeq"));
+        InstructionSimples.put(11, new SimpleInstruction(11, "", "cmpne"));
+        //InstructionSimples.put(12, new SimpleInstruction(12, "", ""));
+        InstructionSimples.put(13, new SimpleInstruction(13, "", "and"));
+        InstructionSimples.put(14, new SimpleInstruction(14, "", "or"));
+        InstructionSimples.put(15, new SimpleInstruction(15, "", "not"));
         InstructionSimples.put(30, new SimpleInstruction(30, "push 0", "sub"));
     }
 
