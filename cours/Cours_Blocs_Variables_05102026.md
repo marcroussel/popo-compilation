@@ -126,7 +126,7 @@ Elle nous sert à détecter les **types des variables** et les **identificateurs
 
 L’analyseur sémantique aura une fonction `declare(ident)` qui allouera de la mémoire pour stocker la variable dont l’identificateur est passé en paramètres. La table des symboles crée une nouvelle boîte, **et elle la renvoie**.
 
-Code de **l’analyseur sémantique**
+Code de la **table des symboles**
 
 ```java
 // J'ai une nouvelle var à rajouter dans la table des symboles, avec cet ident
