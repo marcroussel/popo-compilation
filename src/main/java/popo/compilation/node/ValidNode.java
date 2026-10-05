@@ -24,6 +24,9 @@ public class ValidNode {
         ValidTypes.put("AND", 13);
         ValidTypes.put("OR", 14);
         ValidTypes.put("NOT", 15);
+        ValidTypes.put("DEBUG", 16);
+        ValidTypes.put("DROP", 17);
+        ValidTypes.put("BLOCK", 18);
     }
     public static final HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
     static {
@@ -55,6 +58,5 @@ public class ValidNode {
         
         //Prio : 1
         OP.put(ValidTokens.ASSIGN, new NodeInfo(ValidTokens.ASSIGN, 1, 0, 12));
-        OP.put(ValidTokens.CONST, new NodeInfo(ValidTokens.CONST, 1, 1, 0));
     }
 }

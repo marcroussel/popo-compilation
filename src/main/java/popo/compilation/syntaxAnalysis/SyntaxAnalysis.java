@@ -25,12 +25,33 @@ public class SyntaxAnalysis {
     }
 
 
-    public Node I() {
-        Node nExp = E(); // Parser le contenu de E
-        this.lexicalAnalysis.accept(ValidTokens.SEMI); // "Manger" le token ";"
+    // public Node I() {
+    //     Node nExp = E(); // Parser le contenu de E
+    //     this.lexicalAnalysis.accept(ValidTokens.SEMI); // "Manger" le token ";"
 
-        return nExp;
+    //     return nExp;
+    // }
+
+    Node I() {
+    if (this.lexicalAnalysis.check(ValidTokens.DEBUG)) {
+        Node e = E();
+        this.lexicalAnalysis.accept(ValidTokens.SEMI); // Manger le token ";"
+        return new Node(ValidNode.ValidTypes.get("DEBUG"), e);
     }
+
+    if (this.lexicalAnalysis.check(ValidTokens.LBRACE)) {
+        Node N = new Node(ValidNode.ValidTypes.get("BLOCK"));
+        while (!this.lexicalAnalysis.check(ValidTokens.RBRACE)) {
+            Node.addNode(N,I());
+        }
+        return N;
+    }
+
+    // Ajouter le noeud drop au-dessus
+    Node e = E(); // Parser le contenu de E
+    this.lexicalAnalysis.accept(ValidTokens.SEMI); // Manger le token ";"
+    return new Node(ValidNode.ValidTypes.get("DROP"), e);
+}
 
     public Node E() {
         return EE(0);
