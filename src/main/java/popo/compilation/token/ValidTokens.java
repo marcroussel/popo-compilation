@@ -55,5 +55,7 @@ public enum ValidTokens {
     VOID,
     CONTINUE,
     BREAK,
-    RETURN
+    RETURN,
+    DEBUG,
+    DROP
 }
