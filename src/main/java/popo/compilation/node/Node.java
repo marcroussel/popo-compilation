@@ -43,7 +43,7 @@ public class Node {
         };
     }
 
-    public void addNode (Node parent, Node child) {
+    public static void addNode (Node parent, Node child) {
         parent.nbChildren++;
         parent.children.add(child);
     }

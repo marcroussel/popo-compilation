@@ -323,6 +323,12 @@ public class LexicalAnalysis {
                 case "return":
                     this.currentToken.type = ValidTokens.RETURN;
                     break;
+                case "dbg":
+                    this.currentToken.type = ValidTokens.DEBUG;
+                    break;
+                case "drop":
+                    this.currentToken.type = ValidTokens.DROP;
+                    break;
                 default:
                     // Aucun mot-clé reconnu : on considère qu'il s'agit d'un identificateur
                     this.currentToken.type = ValidTokens.IDENT;

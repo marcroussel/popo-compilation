@@ -7,12 +7,10 @@ import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
 
-    public static final int DBG_CODE_VALUE = -1;
     public SemanticAnalysis semanticAnalysis;
     //Map
     public static final HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
     static {
-        InstructionSimples.put(DBG_CODE_VALUE, new SimpleInstruction(DBG_CODE_VALUE, "", "dbg"));
         InstructionSimples.put(0, new SimpleInstruction(0, "", "push"));
         InstructionSimples.put(1, new SimpleInstruction(1, "", "add"));
         InstructionSimples.put(2, new SimpleInstruction(2, "", "sub"));
@@ -29,20 +27,27 @@ public class CodeGenerator {
         InstructionSimples.put(13, new SimpleInstruction(13, "", "and"));
         InstructionSimples.put(14, new SimpleInstruction(14, "", "or"));
         InstructionSimples.put(15, new SimpleInstruction(15, "", "not"));
+        InstructionSimples.put(16, new SimpleInstruction(16, "", "dbg"));
+        InstructionSimples.put(17, new SimpleInstruction(17, "", "drop 1"));
         InstructionSimples.put(30, new SimpleInstruction(30, "push 0", "sub"));
     }
 
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
     }
-
+    /* 
+        Génération de code à partir de l'arbre d'analyse sémantique 
+    */
     public void genCode() {
         Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
         // Génération de code
         genNode(A);
-        System.out.println(InstructionSimples.get(DBG_CODE_VALUE).suffixe + "\n");
+        System.out.println("\n");
     }
 
+    /* 
+        Génération de code pour un nœud spécifique de l'arbre d'analyse sémantique 
+    */
     public void genNode(Node N) {
         if(InstructionSimples.containsKey(N.type)) {
             String prefixe = InstructionSimples.get(N.type).prefixe;
