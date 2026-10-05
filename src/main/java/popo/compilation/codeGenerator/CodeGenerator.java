@@ -18,6 +18,7 @@ public class CodeGenerator {
         InstructionSimples.put(2, new SimpleInstruction(2, "", "sub"));
         InstructionSimples.put(3, new SimpleInstruction(3, "", "mul"));
         InstructionSimples.put(4, new SimpleInstruction(4, "", "div"));
+        InstructionSimples.put(5, new SimpleInstruction(5, "", "mod"));
         InstructionSimples.put(30, new SimpleInstruction(30, "push 0", "sub"));
     }
 
