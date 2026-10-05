@@ -24,14 +24,9 @@ public class SyntaxAnalysis {
         return nIns;
     }
 
-
-    // public Node I() {
-    //     Node nExp = E(); // Parser le contenu de E
-    //     this.lexicalAnalysis.accept(ValidTokens.SEMI); // "Manger" le token ";"
-
-    //     return nExp;
-    // }
-
+    /* 
+        Analyse syntaxique pour un nœud d'instruction 
+    */
     Node I() {
     if (this.lexicalAnalysis.check(ValidTokens.DEBUG)) {
         Node e = E();
@@ -52,11 +47,16 @@ public class SyntaxAnalysis {
     this.lexicalAnalysis.accept(ValidTokens.SEMI); // Manger le token ";"
     return new Node(ValidNode.ValidTypes.get("DROP"), e);
 }
-
+    /* 
+        Analyse syntaxique pour un nœud d'expression 
+    */
     public Node E() {
         return EE(0);
     }
 
+    /* 
+        Analyse syntaxique pour un nœud d'expression nécessitant la gestion des priorités
+    */
     public Node EE(int pmin) {
         Node a1 = P();
         while (true) {
@@ -71,6 +71,9 @@ public class SyntaxAnalysis {
         return a1;
     }
 
+    /* 
+        Analyse syntaxique pour un nœud primaire (constante, parenthèse, etc.)
+    */
     public Node P() {
 
         // Cas où l'on détectera un moins unaire
@@ -90,7 +93,9 @@ public class SyntaxAnalysis {
         return s;
     }
 
-
+    /* 
+        Analyse syntaxique pour un nœud atomique (constante ou parenthèse)
+    */
     public Node A() {
 
         // On consomme token si le token vérifié est bien une constante ou une parenthèse ouvrante

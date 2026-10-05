@@ -35,7 +35,9 @@ public class CodeGenerator {
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
     }
-
+    /* 
+        Génération de code à partir de l'arbre d'analyse sémantique 
+    */
     public void genCode() {
         Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
         // Génération de code
@@ -43,6 +45,9 @@ public class CodeGenerator {
         System.out.println("\n");
     }
 
+    /* 
+        Génération de code pour un nœud spécifique de l'arbre d'analyse sémantique 
+    */
     public void genNode(Node N) {
         if(InstructionSimples.containsKey(N.type)) {
             String prefixe = InstructionSimples.get(N.type).prefixe;
