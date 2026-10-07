@@ -22,7 +22,7 @@ Pour le moment, on ne va pas rendre en compte les **initialisations** de type : 
 
 Si on veut vraiment le faire, dans **l’analyseur syntaxique**, on doit générer un arbre de cette forme :
 
-![Screenshot 2026-10-07 at 08.47.04.png](Cours%20de%20Compilation/Screenshot_2026-10-07_at_08.47.04.png)
+![Screenshot 2026-10-07 at 08.47.04.png](img/Screenshot_2026-10-07_at_08.47.04.png)
 
 En gros, on rajoute un nœud d’affectation de valeur après la déclaration.
 
@@ -136,7 +136,7 @@ Exemple concret :
 
 Arbre produit par l’analyseur sémantique :
 
-![IMG_3577.HEIC](Cours%20de%20Compilation/IMG_3577.heic)
+![IMG_3577.HEIC](img/IMG_3577.jpeg)
 
 Si on avait remplacé `seq` par un `block` , on aurait un premier `begin()` (celui de la racine), puis un deuxième `begin()` suivie des déclarations de a et b, puis un `end()` , rendant les symboles de a et b inaccessibles, donc **turbo erreur.** 
 
@@ -168,7 +168,7 @@ void semnode(Node N) {
 
 **Et il y a un détail à ne pas oublier**, c’est qu’après l’affectation, il faut ajouter `drop` pour enlever la merde laissée par l’affectation dans la pile, afin de transformer l’affectation en véritable instruction. Voici le même arbre actualisé : 
 
-![IMG_3578.HEIC](Cours%20de%20Compilation/IMG_3578.heic)
+![IMG_3578.HEIC](img/IMG_3578.jpeg)
 
 **Code à rajouter dans** `gencode()` :
 
