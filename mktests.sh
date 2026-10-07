@@ -28,11 +28,7 @@ install_for_maven() {
 install_for_intellij() {
   echo "Création du répertoire de tests"
   mkdir -p tests
-  cd tests
 
-  init_code_and_pull
-
-  cd ..
   mkdir tests-resources
   cd tests-resources
 
