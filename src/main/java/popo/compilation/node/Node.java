@@ -22,6 +22,11 @@ public class Node {
         this.value = String.valueOf(valeur);
     }
 
+    public Node (int type, String ident) {
+        this.type = type;
+        this.Ident = ident;
+    }
+
     public Node (int type, Node child1) {
         this.type = type;
         this.nbChildren = 1;
