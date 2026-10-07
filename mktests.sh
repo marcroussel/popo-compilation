@@ -12,16 +12,8 @@ init_res_and_pull() {
 
 install_for_maven() {
   echo "Création du répertoire de tests"
-  mkdir -p src/test/java/popo/compilation
-  cd src/test/java/popo/compilation
-
-  echo "Suppression des tests actuels"
-  rm -rf ./*
-
-  cd ../../..
-  mkdir resources
-  cd resources
-
+  mkdir -p src/test/resources
+  cd src/test/resources
   init_res_and_pull
 }
 
