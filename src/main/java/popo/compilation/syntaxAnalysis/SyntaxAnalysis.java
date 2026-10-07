@@ -74,9 +74,11 @@ public class SyntaxAnalysis {
         return EE(0);
     }
 
-    /* 
-        Analyse syntaxique pour un nœud d'expression nécessitant la gestion des priorités
-    */
+    /**
+     * Analyse syntaxique pour un nœud d'expression nécessitant la gestion des priorités
+     * @param pmin La priorité minimale pour l'analyse des expressions
+     * @return Le nœud représentant l'expression analysée
+     */
     public Node EE(int pmin) {
         Node a1 = P();
         while (true) {

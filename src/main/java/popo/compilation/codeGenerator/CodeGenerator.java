@@ -46,9 +46,11 @@ public class CodeGenerator {
         genNode(A);
     }
 
-    /* 
-        Génération de code pour un nœud spécifique de l'arbre d'analyse sémantique 
-    */
+    /**
+     * Génération de code pour un nœud spécifique de l'arbre d'analyse sémantique 
+     * @param N Le nœud pour lequel générer le code
+     * @throws CodeGenException Si le type de nœud n'est pas géré
+     */
     public void genNode(Node N) {
         if(InstructionSimples.containsKey(N.type)) {
             String prefixe = InstructionSimples.get(N.type).prefixe;
