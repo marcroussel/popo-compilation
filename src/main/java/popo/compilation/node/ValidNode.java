@@ -27,6 +27,9 @@ public class ValidNode {
         ValidTypes.put("DEBUG", 16);
         ValidTypes.put("DROP", 17);
         ValidTypes.put("BLOCK", 18);
+        ValidTypes.put("DECLARATION", 19);
+        ValidTypes.put("REFERENCE", 20);
+        ValidTypes.put("SECTION", 21);
     }
     public static final HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
     static {
