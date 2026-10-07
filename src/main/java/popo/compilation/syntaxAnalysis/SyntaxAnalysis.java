@@ -4,8 +4,8 @@ import popo.compilation.lexicalAnalysis.LexicalAnalysis;
 import popo.compilation.node.Node;
 import popo.compilation.node.NodeInfo;
 import popo.compilation.node.ValidNode;
-import popo.compilation.token.ValidTokens;
 import popo.compilation.symbol.SymbolTable;
+import popo.compilation.token.ValidTokens;
 
 public class SyntaxAnalysis {
 
@@ -45,6 +45,23 @@ public class SyntaxAnalysis {
         return N;
     }
 
+    // Code de détection d'une déclaration de variable 
+    if (this.lexicalAnalysis.check(ValidTokens.INT)) {
+
+        Node N = new Node(ValidNode.ValidTypes.get("SEQUENCE")); // C'est là qu'on utilise le nouveau nœud séquence
+        Node.addNode(N,new Node(ValidNode.ValidTypes.get("IDENT"), this.lexicalAnalysis.lastToken.ident)); // L'idée est de rajouter un nouveau identificateur fils
+
+        this.lexicalAnalysis.accept(ValidTokens.IDENT);
+        
+        // Dans le cas où on a plusieurs variables à déclarer
+        while(!this.lexicalAnalysis.check(ValidTokens.SEMI)) {
+            this.lexicalAnalysis.accept(ValidTokens.COMMA);
+            this.lexicalAnalysis.accept(ValidTokens.IDENT);
+            
+            Node.addNode(N,new Node(ValidNode.ValidTypes.get("IDENT"), this.lexicalAnalysis.lastToken.ident)); // L'idée est de rajouter un nouveau identificateur fils
+        }
+    }
+
     // Ajouter le noeud drop au-dessus
     Node e = E(); // Parser le contenu de E
     this.lexicalAnalysis.accept(ValidTokens.SEMI); // Manger le token ";"
@@ -57,9 +74,11 @@ public class SyntaxAnalysis {
         return EE(0);
     }
 
-    /* 
-        Analyse syntaxique pour un nœud d'expression nécessitant la gestion des priorités
-    */
+    /**
+     * Analyse syntaxique pour un nœud d'expression nécessitant la gestion des priorités
+     * @param pmin La priorité minimale pour l'analyse des expressions
+     * @return Le nœud représentant l'expression analysée
+     */
     public Node EE(int pmin) {
         Node a1 = P();
         while (true) {

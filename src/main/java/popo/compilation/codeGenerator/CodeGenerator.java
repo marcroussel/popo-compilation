@@ -3,6 +3,7 @@ package popo.compilation.codeGenerator;
 import java.util.HashMap;
 
 import popo.compilation.node.Node;
+import popo.compilation.node.ValidNode;
 import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
@@ -40,14 +41,16 @@ public class CodeGenerator {
     */
     public void genCode() {
         Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
+        System.out.println("res n" + this.semanticAnalysis.nbvar);
         // Génération de code
         genNode(A);
-        System.out.println("\n");
     }
 
-    /* 
-        Génération de code pour un nœud spécifique de l'arbre d'analyse sémantique 
-    */
+    /**
+     * Génération de code pour un nœud spécifique de l'arbre d'analyse sémantique 
+     * @param N Le nœud pour lequel générer le code
+     * @throws CodeGenException Si le type de nœud n'est pas géré
+     */
     public void genNode(Node N) {
         if(InstructionSimples.containsKey(N.type)) {
             String prefixe = InstructionSimples.get(N.type).prefixe;
@@ -61,7 +64,26 @@ public class CodeGenerator {
         }
         else{
             switch (N.type) {
-                default -> throw new CodeGenException("Unhandled node type: " + N.type);
+                case 12: // ASSIGN
+                    genNode(N.children.get(0)); // ND_CONST ou ND_REF
+                    System.out.println("dup"); // On duplique la valeur à assigner pour la garder sur la pile
+                    System.out.println("set " + N.children.get(0).index); // On assigne la valeur à la variable
+                    break;
+                
+                case 18: // BLOCK
+                    for (int i = 0; i < N.nbChildren; i++) {
+                        genNode(N.children.get(i));
+                    }
+                    break;
+
+                case  20: // REF
+                    System.out.println("get " + N.index); 
+                    break;
+
+                case 21: // SEQUENCE
+                    break;
+
+                default : throw new CodeGenException("Unhandled node type: " + N.type);
             }
         }
     }

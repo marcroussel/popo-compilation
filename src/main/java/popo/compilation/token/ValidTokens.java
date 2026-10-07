@@ -51,11 +51,13 @@ public enum ValidTokens {
     FOR,
     WHILE,
     DO,
-    INT,
     VOID,
     CONTINUE,
     BREAK,
     RETURN,
     DEBUG,
-    DROP
+    DROP,
+
+    //Type de déclaration
+    INT
 }
