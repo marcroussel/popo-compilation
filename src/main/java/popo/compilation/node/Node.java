@@ -2,8 +2,9 @@ package popo.compilation.node;
 
 import java.util.ArrayList;
 
+
 public class Node {
-    public int type; // ValidNode.ValidTypes
+    public int type; // ValidNode.ValidTypes.get("TYPE_NAME")
     public String value;
     public String Ident;    // si ValidNode.IDENT
 
@@ -42,18 +43,9 @@ public class Node {
         };
     }
 
-    public void addNode (Node parent, Node child) {
+    public static void addNode (Node parent, Node child) {
         parent.nbChildren++;
-        Node[] newChildren = new Node[parent.nbChildren];
-        System.arraycopy(parent.children, 0, newChildren, 0, parent.children.size());
-        newChildren[parent.nbChildren - 1] = child;
-        parent.children = new ArrayList<Node>() {
-            {
-                for (Node n : newChildren) {
-                    add(n);
-                }
-            }
-        };
+        parent.children.add(child);
     }
 
 }

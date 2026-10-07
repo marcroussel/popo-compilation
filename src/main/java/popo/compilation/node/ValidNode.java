@@ -1,14 +1,16 @@
 package popo.compilation.node;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
+import popo.compilation.token.ValidTokens;
+
 public class ValidNode {
-    public static HashMap<String, Integer> ValidTypes = new HashMap<>();
+    public static final HashMap<String, Integer> ValidTypes = new HashMap<>();
     static {
         ValidTypes.put("CONST", 0);
         ValidTypes.put("PLUS", 1);
         ValidTypes.put("MINUS", 2);
+        ValidTypes.put("UNARY_MINUS", 30);
         ValidTypes.put("MUL", 3);
         ValidTypes.put("DIV", 4);
         ValidTypes.put("MOD", 5);
@@ -22,38 +24,39 @@ public class ValidNode {
         ValidTypes.put("AND", 13);
         ValidTypes.put("OR", 14);
         ValidTypes.put("NOT", 15);
+        ValidTypes.put("DEBUG", 16);
+        ValidTypes.put("DROP", 17);
+        ValidTypes.put("BLOCK", 18);
     }
-    public static ArrayList<NodeInfo> ValidNodeInfos = new ArrayList<>(ValidTypes.size());
+    public static final HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
     static {
         //Prio : 7
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("MUL"), 7, 1, 3));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("DIV"), 7, 1, 4));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("MOD"), 7, 1, 5));
+        OP.put(ValidTokens.MUL, new NodeInfo(ValidTokens.MUL, 7, 1, 3));
+        OP.put(ValidTokens.DIV, new NodeInfo(ValidTokens.DIV, 7, 1, 4));
+        OP.put(ValidTokens.MOD, new NodeInfo(ValidTokens.MOD, 7, 1, 5));
         
         //Prio : 6
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("PLUS"), 6, 1, 1));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("MINUS"), 6, 1, 2));
+        OP.put(ValidTokens.PLUS, new NodeInfo(ValidTokens.PLUS, 6, 1, 1));
+        OP.put(ValidTokens.MINUS, new NodeInfo(ValidTokens.MINUS, 6, 1, 2));
         
         //Prio : 5
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("LT"), 5, 1, 6));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("GT"), 5, 1, 7));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("LE"), 5, 1, 8));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("GE"), 5, 1, 9));
+        OP.put(ValidTokens.LT, new NodeInfo(ValidTokens.LT, 5, 1, 6));
+        OP.put(ValidTokens.GT, new NodeInfo(ValidTokens.GT, 5, 1, 7));
+        OP.put(ValidTokens.LE, new NodeInfo(ValidTokens.LE, 5, 1, 8));
+        OP.put(ValidTokens.GE, new NodeInfo(ValidTokens.GE, 5, 1, 9));
         
         //Prio : 4
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("EQ"), 4, 1, 10));
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("NEQ"), 4, 1, 11));
+        OP.put(ValidTokens.EQ, new NodeInfo(ValidTokens.EQ, 4, 1, 10));
+        OP.put(ValidTokens.NEQ, new NodeInfo(ValidTokens.NEQ, 4, 1, 11));
         
         //Prio : 3
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("AND"), 3, 1, 13));
+        OP.put(ValidTokens.AND, new NodeInfo(ValidTokens.AND, 3, 1, 13));
+        OP.put(ValidTokens.NOT, new NodeInfo(ValidTokens.NOT, 3, 1, 15));
         
         //Prio : 2
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("OR"), 2, 1, 14));
+        OP.put(ValidTokens.OR, new NodeInfo(ValidTokens.OR, 2, 1, 14));
         
         //Prio : 1
-        ValidNodeInfos.add(new NodeInfo(ValidTypes.get("ASSIGN"), 1, 1, 12));
-    
+        OP.put(ValidTokens.ASSIGN, new NodeInfo(ValidTokens.ASSIGN, 1, 0, 12));
     }
-
-
 }
