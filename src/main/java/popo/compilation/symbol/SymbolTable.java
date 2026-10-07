@@ -6,17 +6,7 @@ import java.util.Optional;
 
 public class SymbolTable {
 
-    private ArrayList<HashMap<String, Symbol>> symbolTableStack = new ArrayList<HashMap<String, Symbol>>();
-
-    /**
-     * Constructeur de la table des symboles,
-     * qui commence par créer un premier bloc
-     */
-    public SymbolTable() {
-
-        // Génération du premier bloc de code
-        begin();
-    }
+    public static ArrayList<HashMap<String, Symbol>> symbolTableStack = new ArrayList<HashMap<String, Symbol>>();
 
     /**
      * Déclare un nouveau symbole dans la dernière HashMap
@@ -24,7 +14,7 @@ public class SymbolTable {
      * @return le nouveau symbole rajouté
      * @throws SymbolException Lorsque le symbole existe déjà dans la dernière HashMap
      */
-    Symbol declare(String ident) throws SymbolException {
+    public static Symbol declare(String ident) throws SymbolException {
 
         // Vérification de si le symbole est présent ou non dans la HashMap
         Optional<Symbol> symbol = Optional.ofNullable(symbolTableStack.getLast().get(ident));
@@ -45,7 +35,7 @@ public class SymbolTable {
      * @return Le symbole correspondant, si trouvé
      * @throws SymbolException Si le symbole n'a pas été trouvé
      */
-    Symbol find(String ident) throws SymbolException {
+    public static Symbol find(String ident) throws SymbolException {
 
         // Recherche de l'identificateur
         Optional<Symbol> symbol = Optional.ofNullable(symbolTableStack.getLast().get(ident));
@@ -75,7 +65,7 @@ public class SymbolTable {
      * lorsque l'on entre dans un nouveau bloc de code,
      * puis l'empile dans la stack
      */
-    void begin() {
+    public static void begin() {
         symbolTableStack.add(new HashMap<String, Symbol>());
     }
 
@@ -83,7 +73,7 @@ public class SymbolTable {
      * Dépile la HashMap de symboles au sommet de la stack,
      * lorsque l'on sort d'un bloc de code
      */
-    void end() {
+    public static void end() {
         symbolTableStack.removeLast();
     }
 }

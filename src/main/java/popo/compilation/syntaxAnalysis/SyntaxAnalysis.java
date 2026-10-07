@@ -5,6 +5,7 @@ import popo.compilation.node.Node;
 import popo.compilation.node.NodeInfo;
 import popo.compilation.node.ValidNode;
 import popo.compilation.token.ValidTokens;
+import popo.compilation.symbol.SymbolTable;
 
 public class SyntaxAnalysis {
 
@@ -35,10 +36,12 @@ public class SyntaxAnalysis {
     }
 
     if (this.lexicalAnalysis.check(ValidTokens.LBRACE)) {
+        SymbolTable.begin(); 
         Node N = new Node(ValidNode.ValidTypes.get("BLOCK"));
         while (!this.lexicalAnalysis.check(ValidTokens.RBRACE)) {
             Node.addNode(N,I());
         }
+        SymbolTable.end(); 
         return N;
     }
 
