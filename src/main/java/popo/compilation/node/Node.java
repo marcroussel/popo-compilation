@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 
 public class Node {
-    public int type; // ValidNode.ValidTypes.get("TYPE_NAME")
+    public int type;        // ValidNode.ValidTypes.get("TYPE_NAME")
     public String value;
-    public String Ident;    // si ValidNode.IDENT
+    public String Ident;    // si "IDENT"
+    public int index;       // si "REF"
 
     public int lineNumber;
 
@@ -20,6 +21,11 @@ public class Node {
     public Node (int type, int valeur) {
         this.type = type;
         this.value = String.valueOf(valeur);
+    }
+
+    public Node (int type, String ident) {
+        this.type = type;
+        this.Ident = ident;
     }
 
     public Node (int type, Node child1) {

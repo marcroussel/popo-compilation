@@ -308,9 +308,6 @@ public class LexicalAnalysis {
                 case "do":
                     this.currentToken.type = ValidTokens.DO;
                     break;
-                case "int":
-                    this.currentToken.type = ValidTokens.INT;
-                    break;
                 case "void":
                     this.currentToken.type = ValidTokens.VOID;
                     break;
@@ -329,6 +326,12 @@ public class LexicalAnalysis {
                 case "drop":
                     this.currentToken.type = ValidTokens.DROP;
                     break;
+                
+                // Type de déclaration
+                case "int":
+                    this.currentToken.type = ValidTokens.INT;
+                    break;
+
                 default:
                     // Aucun mot-clé reconnu : on considère qu'il s'agit d'un identificateur
                     this.currentToken.type = ValidTokens.IDENT;
