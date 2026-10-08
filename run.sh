@@ -5,3 +5,5 @@ cd msm
 #gcc msm.c -o msm.exe
 ./msm.exe ../test.txt
 cd ..
+
+# mvn clean test
