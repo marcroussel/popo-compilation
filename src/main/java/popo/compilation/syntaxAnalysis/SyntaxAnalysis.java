@@ -36,12 +36,10 @@ public class SyntaxAnalysis {
     }
 
     if (this.lexicalAnalysis.check(ValidTokens.LBRACE)) {
-        SymbolTable.begin(); 
         Node N = new Node(ValidNode.ValidTypes.get("BLOCK"));
         while (!this.lexicalAnalysis.check(ValidTokens.RBRACE)) {
             Node.addNode(N,I());
         }
-        SymbolTable.end(); 
         return N;
     }
 
