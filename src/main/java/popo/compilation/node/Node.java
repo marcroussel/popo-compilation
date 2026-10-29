@@ -16,16 +16,22 @@ public class Node {
 
     public Node(int type) {
         this.type = type;
+        this.nbChildren = 0;
+        this.children = new ArrayList<>();
     }
 
     public Node (int type, int valeur) {
         this.type = type;
         this.value = String.valueOf(valeur);
+        this.nbChildren = 0;
+        this.children = new ArrayList<>();
     }
 
     public Node (int type, String ident) {
         this.type = type;
         this.Ident = ident;
+        this.nbChildren = 0;
+        this.children = new ArrayList<>();
     }
 
     public Node (int type, Node child1) {
