@@ -1,5 +1,7 @@
 package popo.compilation.node;
 
+import popo.compilation.debug.DebugLogger;
+
 import java.util.ArrayList;
 
 
@@ -55,9 +57,48 @@ public class Node {
         };
     }
 
-    public static void addNode (Node parent, Node child) {
-        parent.nbChildren++;
-        parent.children.add(child);
+    public void addNode (Node child) {
+        this.nbChildren++;
+        this.children.add(child);
     }
 
+    /* ----- Fonctions statiques de débogage ----- */
+    /**
+     * Retourne le nom lisible d'un type de nœud (ex : 18 -> "BLOCK")
+     */
+    private static String nodeTypeName(int type) {
+        for (var entry : ValidNode.ValidTypes.entrySet()) {
+            if (entry.getValue() == type) {
+                return entry.getKey();
+            }
+        }
+        return "UNKNOWN";
+    }
+
+    /**
+     * Affiche pour débogage un nœud : son type, puis ses enfants et leur type
+     * @param N le nœud à inspecter
+     */
+    private static void debugNode(Node N) {
+        if (N == null) {
+            DebugLogger.log("[DEBUG] node = null");
+            return;
+        }
+
+        DebugLogger.log("[DEBUG] node : " + nodeTypeName(N.type) + " (" + N.type + ")"
+                + (N.Ident != null ? ", ident=" + N.Ident : "")
+                + (N.value != null ? ", value=" + N.value : "")
+                + ", line=" + N.lineNumber);
+
+        if (N.children == null || N.children.isEmpty()) {
+            DebugLogger.log("[DEBUG]   (no children)");
+            return;
+        }
+
+        for (int i = 0; i < N.children.size(); i++) {
+            Node c = N.children.get(i);
+            DebugLogger.log("[DEBUG]   child " + i + " : " + nodeTypeName(c.type) + " (" + c.type + ")"
+                    + (c.Ident != null ? ", ident=" + c.Ident : ""));
+        }
+    }
 }
