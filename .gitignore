@@ -27,3 +27,4 @@ target
 *.txt
 ._msm
 msm
+src/test/resources/
