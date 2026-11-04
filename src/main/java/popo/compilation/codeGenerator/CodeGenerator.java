@@ -36,12 +36,16 @@ public class CodeGenerator {
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
     }
+
     /* 
         Génération de code à partir de l'arbre d'analyse sémantique 
     */
     public void genCode() {
         Node A = this.semanticAnalysis.AnaSem(); // Génération de l'arbre d'analyse sémantique
-        System.out.println("res n" + this.semanticAnalysis.nbvar);
+
+        // On dit à la machine de réserver n cases de la pile, pour l'exécution du programme
+        System.out.println("resn " + SemanticAnalysis.nbVar);
+
         // Génération de code
         genNode(A);
     }
@@ -65,7 +69,7 @@ public class CodeGenerator {
         else{
             switch (N.type) {
                 case 12: // ASSIGN
-                    genNode(N.children.get(0)); // ND_CONST ou ND_REF
+                    genNode(N.children.get(1)); // La valeur à assigner (membre droit ; constante ou référence)
                     System.out.println("dup"); // On duplique la valeur à assigner pour la garder sur la pile
                     System.out.println("set " + N.children.get(0).index); // On assigne la valeur à la variable
                     break;
@@ -76,7 +80,7 @@ public class CodeGenerator {
                     }
                     break;
 
-                case  20: // REF
+                case  20: // REFERENCE
                     System.out.println("get " + N.index); 
                     break;
 

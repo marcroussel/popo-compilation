@@ -24,7 +24,7 @@ public class SymbolTable {
         }
 
         // Création et renvoi du nouveau symbole
-        Symbol newSymbol = new Symbol(ident);
+        Symbol newSymbol = new Symbol();
         symbolTableStack.getLast().put(ident, newSymbol);
         return newSymbol;
     }

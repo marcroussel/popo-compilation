@@ -7,97 +7,97 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SymbolTableTest {
 
-    private SymbolTable table;
-
     @BeforeEach
     void setUp() {
-        table = new SymbolTable();
+        // SymbolTable est statique : on repart d'une pile vide avec un bloc global
+        SymbolTable.symbolTableStack.clear();
+        SymbolTable.begin();
     }
 
     @Test
-    void declareReturnsNewSymbolWithIdentifierAsValue() {
-        Symbol symbol = table.declare("x");
+    void declareReturnsDefaultVariableSymbol() throws SymbolException {
+        Symbol symbol = SymbolTable.declare("x");
 
-        assertNotNull(symbol);
-        assertEquals("x", symbol.getValue());
+        assertEquals(ValidSymbol.ValidTypes.get("VARIABLE"), symbol.type);
+        assertEquals(-1, symbol.index);
     }
 
     @Test
-    void declareSameIdentifierTwiceInSameBlockThrows() {
-        table.declare("x");
+    void declareSameIdentifierTwiceInSameBlockThrows() throws SymbolException {
+        SymbolTable.declare("x");
 
-        SymbolException exception = assertThrows(SymbolException.class, () -> table.declare("x"));
+        SymbolException exception = assertThrows(SymbolException.class, () -> SymbolTable.declare("x"));
         assertEquals("Symbol already declared: x", exception.getMessage());
     }
 
     @Test
-    void findReturnsDeclaredSymbol() {
-        Symbol declared = table.declare("x");
+    void findReturnsDeclaredSymbol() throws SymbolException {
+        Symbol declared = SymbolTable.declare("x");
 
-        assertSame(declared, table.find("x"));
+        assertSame(declared, SymbolTable.find("x"));
     }
 
     @Test
     void findUnknownIdentifierThrows() {
-        SymbolException exception = assertThrows(SymbolException.class, () -> table.find("unknown"));
+        SymbolException exception = assertThrows(SymbolException.class, () -> SymbolTable.find("unknown"));
         assertEquals("Symbol not found: unknown", exception.getMessage());
     }
 
     @Test
-    void sameIdentifierCanBeDeclaredInNestedBlock() {
-        Symbol outer = table.declare("x");
-        table.begin();
+    void sameIdentifierCanBeDeclaredInNestedBlock() throws SymbolException {
+        Symbol outer = SymbolTable.declare("x");
+        SymbolTable.begin();
 
-        Symbol inner = table.declare("x");
+        Symbol inner = SymbolTable.declare("x");
 
         assertNotSame(outer, inner);
-        assertSame(inner, table.find("x"));
+        assertSame(inner, SymbolTable.find("x"));
     }
 
     @Test
-    void findSearchesOuterBlocks() {
-        Symbol outer = table.declare("x");
-        table.begin();
-        table.declare("y");
+    void findSearchesOuterBlocks() throws SymbolException {
+        Symbol outer = SymbolTable.declare("x");
+        SymbolTable.begin();
+        SymbolTable.declare("y");
 
-        assertSame(outer, table.find("x"));
+        assertSame(outer, SymbolTable.find("x"));
     }
 
     @Test
-    void symbolsOfEndedBlockAreNoLongerVisible() {
-        table.begin();
-        table.declare("y");
-        table.end();
+    void symbolsOfEndedBlockAreNoLongerVisible() throws SymbolException {
+        SymbolTable.begin();
+        SymbolTable.declare("y");
+        SymbolTable.end();
 
-        assertThrows(SymbolException.class, () -> table.find("y"));
+        assertThrows(SymbolException.class, () -> SymbolTable.find("y"));
     }
 
     @Test
-    void symbolsOfOuterBlockAreVisibleAfterEndingInnerBlock() {
-        Symbol outer = table.declare("x");
-        table.begin();
-        table.end();
+    void symbolsOfOuterBlockAreVisibleAfterEndingInnerBlock() throws SymbolException {
+        Symbol outer = SymbolTable.declare("x");
+        SymbolTable.begin();
+        SymbolTable.end();
 
-        assertSame(outer, table.find("x"));
+        assertSame(outer, SymbolTable.find("x"));
     }
 
     @Test
-    void innerDeclarationShadowsOuterOnlyWhileInsideBlock() {
-        Symbol outer = table.declare("x");
-        table.begin();
-        Symbol inner = table.declare("x");
-        table.end();
+    void innerDeclarationShadowsOuterOnlyWhileInsideBlock() throws SymbolException {
+        Symbol outer = SymbolTable.declare("x");
+        SymbolTable.begin();
+        Symbol inner = SymbolTable.declare("x");
+        SymbolTable.end();
 
-        assertSame(outer, table.find("x"));
-        assertNotSame(inner, table.find("x"));
+        assertSame(outer, SymbolTable.find("x"));
+        assertNotSame(inner, SymbolTable.find("x"));
     }
 
     @Test
-    void sameIdentifierCanBeRedeclaredInNewBlockAfterEnd() {
-        table.begin();
-        table.declare("y");
-        table.end();
+    void sameIdentifierCanBeRedeclaredInNewBlockAfterEnd() throws SymbolException {
+        SymbolTable.begin();
+        SymbolTable.declare("y");
+        SymbolTable.end();
 
-        assertDoesNotThrow(() -> table.declare("y"));
+        assertDoesNotThrow(() -> SymbolTable.declare("y"));
     }
 }

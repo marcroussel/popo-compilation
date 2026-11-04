@@ -23,6 +23,29 @@ dbg (9999999);
 1 >= 2;
 
 dbg (9999999);
+{
+    1 && 1;
+
+    int var1;
+    var1 = 9;
+    dbg (var1);
+
+    {
+        int var2, var3;
+        var2 = 2;
+        var3 = 3;
+        var1 = var1 + var2;
+
+        dbg (var2);
+        dbg (var3);
+        dbg (var1);
+
+        1 && 0;
+        3 && 1;
+    }
+
+    dbg (var1);
+}
 1 && 1;
 1 && 0;
 3 && 1;
