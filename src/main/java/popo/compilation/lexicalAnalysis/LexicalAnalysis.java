@@ -320,7 +320,7 @@ public class LexicalAnalysis {
                 case "return":
                     this.currentToken.type = ValidTokens.RETURN;
                     break;
-                case "dbg":
+                case "debug":
                     this.currentToken.type = ValidTokens.DEBUG;
                     break;
                 case "drop":

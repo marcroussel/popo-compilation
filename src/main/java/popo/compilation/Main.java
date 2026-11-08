@@ -17,7 +17,7 @@ public class Main {
         // Exception levée si aucun fichier n'a été renseigné
         if (args.length == 0) {
             System.err.println("Erreur : aucun fichier à compiler n'a été fourni.");
-            System.err.println("Usage : ./run.sh <fichier_source.c>");
+            System.err.println("Usage : java -cp target/classes popo.compilation.Main <fichier_source.c>");
             System.exit(1);
         }
 
@@ -31,7 +31,7 @@ public class Main {
         }
 
         // On arrête le programme
-        System.out.println(".halt");
+        System.out.println("halt");
     }
     
     public static void init(String filePath) {
