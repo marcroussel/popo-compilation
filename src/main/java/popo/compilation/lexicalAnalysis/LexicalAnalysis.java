@@ -282,7 +282,7 @@ public class LexicalAnalysis {
         }
 
         // Si le token est alphabétique
-        else if (Character.isAlphabetic(firstChar)) {
+        else if (isAlphaNumericChar(firstChar)) {
             // Récupération des autres caractères, tant qu'ils sont alphanumériques
             // ou des underscores
             while (charPos < source.length() && isAlphaNumericChar(peekNextChar())) {
