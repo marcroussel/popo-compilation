@@ -3,7 +3,6 @@ package popo.compilation.codeGenerator;
 import java.util.HashMap;
 
 import popo.compilation.node.Node;
-import popo.compilation.node.ValidNode;
 import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
@@ -64,7 +63,7 @@ public class CodeGenerator {
             for (int i = 0; i < N.nbChildren; i++) {
                 genNode(N.children.get(i));
             }
-            System.out.println(InstructionSimples.get(N.type).suffixe + " " + (N.value != null ? N.value : ""));
+            System.out.println(InstructionSimples.get(N.type).suffixe + (N.value != null ? " " + N.value : ""));
         }
         else{
             switch (N.type) {
