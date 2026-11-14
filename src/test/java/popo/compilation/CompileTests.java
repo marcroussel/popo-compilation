@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,6 +83,17 @@ public class CompileTests {
                 Integer.MAX_VALUE,
                 (path, bfa) -> path.toString().endsWith(".c") && bfa.isRegularFile()
         );
+    }
+
+    // TODO provisoire (debug) : à supprimer
+    /** Nom du fichier de test à déboguer (sans l'extension .c) */
+    private static final String DEBUG_FILE = "22_espaces_commentaires";
+
+    /** Compile uniquement le fichier DEBUG_FILE. Modifier la constante ci-dessus pour changer de fichier. */
+    @Test
+    void compileOne() throws IOException, URISyntaxException {
+        Path file = Path.of(getClass().getResource("/c-files").toURI()).resolve(DEBUG_FILE + ".c");
+        compile(file);
     }
 
     @TestFactory

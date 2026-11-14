@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import popo.compilation.debug.DebugLogger;
 import popo.compilation.token.Token;
 import popo.compilation.token.ValidTokens;
 
@@ -228,7 +229,26 @@ public class LexicalAnalysis {
                     this.currentToken.type = ValidTokens.MUL;
                     break;
                 case "/":
-                    this.currentToken.type = ValidTokens.DIV;
+
+                    // En cas de commentaire de fin de ligne détecté
+                    if (peekNextChar() == '/') {
+                        DebugLogger.log("[DEBUG] Commentaire inline détecté en ligne " + line);
+
+                        // Passage des caractères jusqu'à un retour chariot
+                        IO.println("here");
+                        while (peekNextChar() != '\n') {
+                            DebugLogger.log("Next char: " + peekNextChar());
+                            // advanceChar();
+                            DebugLogger.log("Advancing char: " + advanceChar());
+                        }
+                        // advanceChar(); // Passage de ce retour chariot
+                        DebugLogger.log("Advancing last char: " + advanceChar());
+
+                        break;
+                    }
+                    else {
+                        this.currentToken.type = ValidTokens.DIV;
+                    }
                     break;
                 case "%":
                     this.currentToken.type = ValidTokens.MOD;
@@ -249,11 +269,13 @@ public class LexicalAnalysis {
                 case "!":
                     this.currentToken.type = ValidTokens.NOT;
                     break;
+
                 // Lorsqu'un caractère inconnu a été détecté,
                 // On lève une erreur
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
+
             this.currentToken.line = line ;
         }
 
@@ -347,7 +369,8 @@ public class LexicalAnalysis {
         }
 
         try {
-        // Sauvegarde de l'ancien token
+            // Sauvegarde de l'ancien token
+            DebugLogger.log("[DEBUG] Lexical Token: " + currentToken.type + " | Line: " + line);
             this.lastToken = new Token(this.currentToken);
         } catch (Exception e) {
             throw new LexicalException(String.format("Error processing token at line %d", this.line));
