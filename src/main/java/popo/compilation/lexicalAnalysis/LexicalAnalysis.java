@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import popo.compilation.debug.DebugLogger;
 import popo.compilation.token.Token;
 import popo.compilation.token.ValidTokens;
 
@@ -232,20 +231,54 @@ public class LexicalAnalysis {
 
                     // En cas de commentaire de fin de ligne détecté
                     if (peekNextChar() == '/') {
-                        DebugLogger.log("[DEBUG] Commentaire inline détecté en ligne " + line);
 
-                        // Passage des caractères jusqu'à un retour chariot
-                        IO.println("here");
-                        while (peekNextChar() != '\n') {
-                            DebugLogger.log("Next char: " + peekNextChar());
-                            // advanceChar();
-                            DebugLogger.log("Advancing char: " + advanceChar());
+                        // Passage des caractères jusqu'à trouver
+                        // un retour chariot ou une fin de flux
+                        while (peekNextChar() != '\n' && peekNextChar() != '\0') {
+                            advanceChar();
                         }
-                        // advanceChar(); // Passage de ce retour chariot
-                        DebugLogger.log("Advancing last char: " + advanceChar());
 
-                        break;
+                        // Passage du retour chariot si détecté
+                        if (peekNextChar() == '\n') {
+                            advanceChar();
+                        }
+
+                        // Appel récursif de next(), pour déterminer le token après avoir passé le commentaire
+                        next();
+
+                        // Interruption de cet appel de next, une fois le token trouvé dans l'appel récursif
+                        return;
                     }
+
+                    // En cas de commentaire sur multi-ligne détecté
+                    else if (peekNextChar() == '*') {
+
+                        // Passage de l'astérisque
+                        advanceChar();
+
+                        // Passage des caractères jusqu'à trouver
+                        // '*/' ou une fin de flux
+                        boolean end_detected = false;
+                        while (peekNextChar() != '\0' && !end_detected) {
+
+                            char c = advanceChar();
+
+                            // Si un astérisque a été trouvé et
+                            // le prochain caractère est un slash
+                            if (c == '*' && peekNextChar() == '/') {
+                                advanceChar();
+                                end_detected = true;
+                            }
+                        }
+
+                        // Appel récursif de next(), pour déterminer le token après avoir passé le commentaire
+                        next();
+
+                        // Interruption de cet appel de next, une fois le token trouvé dans l'appel récursif
+                        return;
+                    }
+
+                    // Autres cas : On considère que c'est le symbole de division
                     else {
                         this.currentToken.type = ValidTokens.DIV;
                     }
@@ -275,7 +308,6 @@ public class LexicalAnalysis {
                 default:
                     throw new LexicalException(String.format("Unrecognized character: '%s' at line %d", token, this.line));
             }
-
             this.currentToken.line = line ;
         }
 
@@ -285,7 +317,7 @@ public class LexicalAnalysis {
             while (charPos < source.length() && Character.isDigit(peekNextChar())) {
                 tokenBuilder.append(advanceChar());
             }
-            // inutille pour le moment :
+            // inutile pour le moment :
 
             // On lève une erreur si le caractère suivant n'est ni un espace,
             // ni un caractère de fermeture (';', ')', ... ), ni la fin du flux
@@ -370,7 +402,6 @@ public class LexicalAnalysis {
 
         try {
             // Sauvegarde de l'ancien token
-            DebugLogger.log("[DEBUG] Lexical Token: " + currentToken.type + " | Line: " + line);
             this.lastToken = new Token(this.currentToken);
         } catch (Exception e) {
             throw new LexicalException(String.format("Error processing token at line %d", this.line));
