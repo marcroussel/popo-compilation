@@ -1,6 +1,5 @@
 package popo.compilation.syntaxAnalysis;
 
-import popo.compilation.debug.DebugLogger;
 import popo.compilation.lexicalAnalysis.LexicalAnalysis;
 import popo.compilation.node.Node;
 import popo.compilation.node.NodeInfo;
@@ -48,7 +47,6 @@ public class SyntaxAnalysis {
 
         // Détection de condition (if)
         if (this.lexicalAnalysis.check(ValidTokens.IF)) {
-            DebugLogger.log("[DEBUG] if détecté");
 
             // On attend une structure du style ( E )
             this.lexicalAnalysis.accept(ValidTokens.LPAREN);
@@ -64,7 +62,6 @@ public class SyntaxAnalysis {
 
             // Si on trouve un else
             if (this.lexicalAnalysis.check(ValidTokens.ELSE)) {
-                DebugLogger.log("[DEBUG] else détecté");
                 Node i2 = I();
                 N.addNode(i2);
             }
