@@ -2,13 +2,16 @@ package popo.compilation.codeGenerator;
 
 import java.util.HashMap;
 
+import popo.compilation.debug.DebugLogger;
 import popo.compilation.node.Node;
 import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
 
+    public int nbLabel;
+
     public SemanticAnalysis semanticAnalysis;
-    //Map
+
     public static final HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
     static {
         InstructionSimples.put(0, new SimpleInstruction(0, "", "push"));
@@ -34,6 +37,7 @@ public class CodeGenerator {
 
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
+        this.nbLabel = 0; // Initialisation du nombre de labels
     }
 
     /* 
@@ -45,7 +49,7 @@ public class CodeGenerator {
         // On dit à la machine de réserver n cases de la pile, pour l'exécution du programme
         System.out.println("resn " + SemanticAnalysis.nbVar);
 
-        // Génération de code
+        // Génération de code par nœud
         genNode(A);
     }
 
@@ -79,11 +83,21 @@ public class CodeGenerator {
                     }
                     break;
 
-                case  20: // REFERENCE
+                case 20: // REFERENCE
                     System.out.println("get " + N.index); 
                     break;
 
                 case 21: // SEQUENCE
+                    break;
+
+                case 23: // COND
+                    int label = nbLabel++;
+                    DebugLogger.log("[CodeGenerator] using label " + label);
+                    DebugLogger.log("[CodeGenerator] new nbLabel " + nbLabel);
+                    genNode(N.children.get(0));
+                    System.out.println("jumpf " + label);
+                    genNode(N.children.get(1));
+                    System.out.println("." + label);
                     break;
 
                 default : throw new CodeGenException("Unhandled node type: " + N.type);
