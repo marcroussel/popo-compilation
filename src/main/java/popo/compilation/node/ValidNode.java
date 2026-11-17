@@ -31,6 +31,8 @@ public class ValidNode {
         ValidTypes.put("REFERENCE", 20);
         ValidTypes.put("SEQUENCE", 21);
         ValidTypes.put("IDENT", 22);
+        ValidTypes.put("COND", 23);
+        ValidTypes.put("LOOP", 24);
     }
     public static final HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
     static {
