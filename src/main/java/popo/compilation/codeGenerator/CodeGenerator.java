@@ -87,6 +87,12 @@ public class CodeGenerator {
                         genNode(N.children.get(i));
                     }
                     break;
+                
+                case 19: // DECLARATION
+                //     for (int i = 0; i < N.nbChildren; i++) {
+                //         genNode(N.children.get(i));
+                //     }
+                     break;
 
                 case 20: // REFERENCE
                     System.out.println("get " + N.index); 
