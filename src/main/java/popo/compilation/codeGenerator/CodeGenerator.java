@@ -8,6 +8,7 @@ import popo.compilation.semanticAnalysis.SemanticAnalysis;
 public class CodeGenerator {
 
     public int nbLabel;
+    public int nbBreak;
 
     public SemanticAnalysis semanticAnalysis;
 
@@ -37,6 +38,7 @@ public class CodeGenerator {
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
         this.nbLabel = 0; // Initialisation du nombre de labels
+        this.nbBreak = 0; // Initialisation du nombre de breaks
     }
 
     /* 
@@ -85,12 +87,21 @@ public class CodeGenerator {
                         genNode(N.children.get(i));
                     }
                     break;
+                
+                case 19: // DECLARATION
+                //     for (int i = 0; i < N.nbChildren; i++) {
+                //         genNode(N.children.get(i));
+                //     }
+                     break;
 
                 case 20: // REFERENCE
                     System.out.println("get " + N.index); 
                     break;
 
                 case 21: // SEQUENCE
+                    for (int i = 0; i < N.nbChildren; i++) {
+                        genNode(N.children.get(i));
+                    }
                     break;
 
                 case 23: // COND
@@ -123,6 +134,28 @@ public class CodeGenerator {
                         System.out.println("." + label);
                     }
 
+                    break;
+                
+                case 24: // LOOP
+                    int nbB = nbBreak++ ;
+                    int save = nbBreak;
+                    nbBreak = nbB;
+                    
+                    System.out.println(".b" + nbB + "\n");
+                    
+                    for (int i = 0; i < N.nbChildren; i++) {
+                        Node E = N.children.get(i);
+                        genNode(E);
+                    }
+
+                    System.out.println("jump b" + nbB);
+                    System.out.println(".e" + nbB);
+                    // Restauration de la sauvegarde
+                    nbBreak = save;
+                    break;
+
+                case 25: // BREAK
+                    System.out.println("jump e" + nbBreak);
                     break;
 
                 default : throw new CodeGenException("Unhandled node type: " + N.type);

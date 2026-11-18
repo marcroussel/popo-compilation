@@ -69,6 +69,77 @@ public class SyntaxAnalysis {
             return N;
         }
 
+        if (this.lexicalAnalysis.check(ValidTokens.FOR)) {
+            this.lexicalAnalysis.accept(ValidTokens.LPAREN);
+            Node e1 = E();
+            this.lexicalAnalysis.accept(ValidTokens.SEMI);
+            Node e2 = E();
+            this.lexicalAnalysis.accept(ValidTokens.SEMI);
+            Node e3 = E();
+            this.lexicalAnalysis.accept(ValidTokens.RPAREN);
+            Node i = I();
+            
+            Node s1 = new Node(ValidNode.ValidTypes.get("SEQUENCE"));
+            Node s2 = new Node(ValidNode.ValidTypes.get("SEQUENCE"));
+            Node l = new Node(ValidNode.ValidTypes.get("LOOP"));
+            Node c = new Node(ValidNode.ValidTypes.get("COND"));
+            Node b = new Node(ValidNode.ValidTypes.get("BREAK"));
+
+            s2.addNode(i);
+            s2.addNode(e3);
+            c.addNode(e2);
+            c.addNode(s2);
+            c.addNode(b);
+            l.addNode(c);
+            s1.addNode(e1);
+            s1.addNode(l);
+
+            return s1;
+        }
+        
+        // Détection de boucle (while)
+        if (this.lexicalAnalysis.check(ValidTokens.WHILE)) {
+            // While
+            this.lexicalAnalysis.accept(ValidTokens.LPAREN);
+            Node e = E();
+            this.lexicalAnalysis.accept(ValidTokens.RPAREN);
+            Node i = I();
+
+            Node l = new Node(ValidNode.ValidTypes.get("LOOP"));
+            Node c = new Node(ValidNode.ValidTypes.get("COND"));
+            Node b = new Node(ValidNode.ValidTypes.get("BREAK"));
+
+            l.addNode(c);
+            c.addNode(e);
+            c.addNode(i);
+            c.addNode(b);
+
+            return l;
+        }
+
+        // Détection de boucle (do-while)
+        if (this.lexicalAnalysis.check(ValidTokens.DO)) {
+            // Do
+            Node i = I();
+            this.lexicalAnalysis.accept(ValidTokens.WHILE);
+            this.lexicalAnalysis.accept(ValidTokens.LPAREN);
+            Node e = E();
+            this.lexicalAnalysis.accept(ValidTokens.RPAREN);
+            this.lexicalAnalysis.accept(ValidTokens.SEMI);
+
+            Node l = new Node(ValidNode.ValidTypes.get("LOOP"));
+            Node c = new Node(ValidNode.ValidTypes.get("COND"));
+            Node b = new Node(ValidNode.ValidTypes.get("BREAK"));
+
+            c.addNode(e);
+            c.addNode(i);
+            c.addNode(b);
+            l.addNode(i);
+            l.addNode(c);
+
+            return l;
+        }
+
         // Code de détection d'une déclaration de variable
         if (this.lexicalAnalysis.check(ValidTokens.INT)) {
 

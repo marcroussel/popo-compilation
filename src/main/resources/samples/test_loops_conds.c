@@ -81,4 +81,33 @@
         y = y + 5;
     }
     debug(y);
+    x = 15;
+    
+    // attendu : 16, 17, 18, 19, 20, 21, 100000001, 100000001, 100000001, 100000001, 0, 1, 2, 3, 4
+    if (x < 20) {
+        
+        while (x < 10) {
+            x = x + 1;
+            debug(300);
+        }
+
+        while (x < 20) {
+            x = x + 1;
+            debug(x);
+        }
+
+        do {
+            x = x + 1;
+            debug(x);
+        } while (x < 20);
+
+        do {
+            x = x + 1;
+            debug(100000001);
+        } while (x < 25);
+
+        for (x = 0; x < 5; x = x + 1) { // To Do : int i = 0 , i++
+            debug(x);
+        }
+    }
 }
