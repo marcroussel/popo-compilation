@@ -228,7 +228,60 @@ public class LexicalAnalysis {
                     this.currentToken.type = ValidTokens.MUL;
                     break;
                 case "/":
-                    this.currentToken.type = ValidTokens.DIV;
+
+                    // En cas de commentaire de fin de ligne détecté
+                    if (peekNextChar() == '/') {
+
+                        // Passage des caractères jusqu'à trouver
+                        // un retour chariot ou une fin de flux
+                        while (peekNextChar() != '\n' && peekNextChar() != '\0') {
+                            advanceChar();
+                        }
+
+                        // Passage du retour chariot si détecté
+                        if (peekNextChar() == '\n') {
+                            advanceChar();
+                        }
+
+                        // Appel récursif de next(), pour déterminer le token après avoir passé le commentaire
+                        next();
+
+                        // Interruption de cet appel de next, une fois le token trouvé dans l'appel récursif
+                        return;
+                    }
+
+                    // En cas de commentaire sur multi-ligne détecté
+                    else if (peekNextChar() == '*') {
+
+                        // Passage de l'astérisque
+                        advanceChar();
+
+                        // Passage des caractères jusqu'à trouver
+                        // '*/' ou une fin de flux
+                        boolean end_detected = false;
+                        while (peekNextChar() != '\0' && !end_detected) {
+
+                            char c = advanceChar();
+
+                            // Si un astérisque a été trouvé et
+                            // le prochain caractère est un slash
+                            if (c == '*' && peekNextChar() == '/') {
+                                advanceChar();
+                                end_detected = true;
+                            }
+                        }
+
+                        // Appel récursif de next(), pour déterminer le token après avoir passé le commentaire
+                        next();
+
+                        // Interruption de cet appel de next, une fois le token trouvé dans l'appel récursif
+                        return;
+                    }
+
+                    // Autres cas : On considère que c'est le symbole de division
+                    else {
+                        this.currentToken.type = ValidTokens.DIV;
+                    }
                     break;
                 case "%":
                     this.currentToken.type = ValidTokens.MOD;
@@ -249,6 +302,7 @@ public class LexicalAnalysis {
                 case "!":
                     this.currentToken.type = ValidTokens.NOT;
                     break;
+
                 // Lorsqu'un caractère inconnu a été détecté,
                 // On lève une erreur
                 default:
@@ -263,7 +317,7 @@ public class LexicalAnalysis {
             while (charPos < source.length() && Character.isDigit(peekNextChar())) {
                 tokenBuilder.append(advanceChar());
             }
-            // inutille pour le moment :
+            // inutile pour le moment :
 
             // On lève une erreur si le caractère suivant n'est ni un espace,
             // ni un caractère de fermeture (';', ')', ... ), ni la fin du flux
@@ -347,7 +401,7 @@ public class LexicalAnalysis {
         }
 
         try {
-        // Sauvegarde de l'ancien token
+            // Sauvegarde de l'ancien token
             this.lastToken = new Token(this.currentToken);
         } catch (Exception e) {
             throw new LexicalException(String.format("Error processing token at line %d", this.line));

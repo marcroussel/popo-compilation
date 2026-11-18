@@ -29,18 +29,43 @@ public class SyntaxAnalysis {
     */
     public Node I() {
 
-
+        // Détection de debug
         if (this.lexicalAnalysis.check(ValidTokens.DEBUG)) {
             Node e = E();
             this.lexicalAnalysis.accept(ValidTokens.SEMI); // Manger le token ";"
             return new Node(ValidNode.ValidTypes.get("DEBUG"), e);
         }
 
+        // Détection de bloc
         if (this.lexicalAnalysis.check(ValidTokens.LBRACE)) {
             Node N = new Node(ValidNode.ValidTypes.get("BLOCK"));
             while (!this.lexicalAnalysis.check(ValidTokens.RBRACE)) {
                 N.addNode(I());
             }
+            return N;
+        }
+
+        // Détection de condition (if)
+        if (this.lexicalAnalysis.check(ValidTokens.IF)) {
+
+            // On attend une structure du style ( E )
+            this.lexicalAnalysis.accept(ValidTokens.LPAREN);
+            Node e = E();
+            this.lexicalAnalysis.accept(ValidTokens.RPAREN);
+
+            // Puis, on analyse les instructions
+            Node i1 = I();
+
+            // On commence à construire notre nœud
+            // (avec un nouveau type 'conditionnelle')
+            Node N = new Node(ValidNode.ValidTypes.get("COND"), e, i1);
+
+            // Si on trouve un else
+            if (this.lexicalAnalysis.check(ValidTokens.ELSE)) {
+                Node i2 = I();
+                N.addNode(i2);
+            }
+
             return N;
         }
 

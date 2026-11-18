@@ -7,8 +7,10 @@ import popo.compilation.semanticAnalysis.SemanticAnalysis;
 
 public class CodeGenerator {
 
+    public int nbLabel;
+
     public SemanticAnalysis semanticAnalysis;
-    //Map
+
     public static final HashMap<Integer, SimpleInstruction> InstructionSimples = new HashMap<>(); 
     static {
         InstructionSimples.put(0, new SimpleInstruction(0, "", "push"));
@@ -34,6 +36,7 @@ public class CodeGenerator {
 
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
+        this.nbLabel = 0; // Initialisation du nombre de labels
     }
 
     /* 
@@ -45,7 +48,7 @@ public class CodeGenerator {
         // On dit à la machine de réserver n cases de la pile, pour l'exécution du programme
         System.out.println("resn " + SemanticAnalysis.nbVar);
 
-        // Génération de code
+        // Génération de code par nœud
         genNode(A);
     }
 
@@ -55,6 +58,8 @@ public class CodeGenerator {
      * @throws CodeGenException Si le type de nœud n'est pas géré
      */
     public void genNode(Node N) {
+
+        // Pour les nœuds d'instructions simples
         if(InstructionSimples.containsKey(N.type)) {
             String prefixe = InstructionSimples.get(N.type).prefixe;
             if (prefixe != null && !prefixe.isEmpty()) {
@@ -65,6 +70,8 @@ public class CodeGenerator {
             }
             System.out.println(InstructionSimples.get(N.type).suffixe + (N.value != null ? " " + N.value : ""));
         }
+
+        // Pour les nœuds particuliers ou nécessitant plusieurs instructions
         else{
             switch (N.type) {
                 case 12: // ASSIGN
@@ -79,11 +86,43 @@ public class CodeGenerator {
                     }
                     break;
 
-                case  20: // REFERENCE
+                case 20: // REFERENCE
                     System.out.println("get " + N.index); 
                     break;
 
                 case 21: // SEQUENCE
+                    break;
+
+                case 23: // COND
+                    int label = nbLabel++;
+
+                    // Placement dans la pile du code de
+                    // l'expression de condition
+                    genNode(N.children.get(0));
+
+                    // Saut vers label si expression de condition fausse
+                    System.out.println("jumpf " + label);
+
+                    // Placement dans la pile du code
+                    // de ou des instructions i1 si condition vraie
+                    genNode(N.children.get(1));
+
+                    // S'il existe d'autres instructions si la
+                    // condition initiale n'est pas respectée
+                    if (N.nbChildren > 2) {
+                        int label2 = nbLabel++;
+                        System.out.println("jump " + label2); // Saut inconditionnel de l'i2 si i1 a été exe
+                        System.out.println("." + label);
+
+                        // Placement dans la pile du code
+                        // de ou des instructions i2 si condition fausse
+                        genNode(N.children.get(2));
+                        System.out.println("." + label2);
+                    }
+                    else {
+                        System.out.println("." + label);
+                    }
+
                     break;
 
                 default : throw new CodeGenException("Unhandled node type: " + N.type);

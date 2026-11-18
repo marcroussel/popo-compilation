@@ -13,7 +13,7 @@ public enum ValidTokens {
     PLUS,       // +
     MINUS,      // -
     MUL,        // *  (multiplication ET déréférencement de pointeur, ex: *p)
-    DIV,        // /
+    DIV,        // /  (utilisable aussi pour détecter des commentaires)
     MOD,        // %  (modulo)
     AMP,        // &  (adresse d'une variable, ex: &x — aussi utilisable en ET binaire)
 
@@ -58,6 +58,6 @@ public enum ValidTokens {
     DEBUG,
     DROP,
 
-    //Type de déclaration
+    // Type de déclaration
     INT
 }
