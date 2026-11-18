@@ -186,6 +186,12 @@ public class SyntaxAnalysis {
             return N;
         }
 
+        if (this.lexicalAnalysis.check(ValidTokens.RETURN)) {
+            Node e = E();
+            this.lexicalAnalysis.accept(ValidTokens.SEMI);
+            return new Node(ValidNode.ValidTypes.get("RETURN"), e);
+        }
+
         // Ajouter le noeud drop au-dessus
         Node e = E(); // Parser le contenu de E
         this.lexicalAnalysis.accept(ValidTokens.SEMI); // Manger le token ";"
@@ -237,9 +243,31 @@ public class SyntaxAnalysis {
             return new Node(ValidNode.ValidTypes.get("NOT"), p);
         }
 
-        Node s = A();
-
+        Node s = S();
         return s;
+    }
+
+    public Node S() {
+        Node a = A();
+        if (this.lexicalAnalysis.check(ValidTokens.LPAREN)) {
+            Node c = new Node(ValidNode.ValidTypes.get("CALL"), a);
+            if (!this.lexicalAnalysis.check(ValidTokens.RPAREN)){
+                while (true){    // peut-être remplacre "true" par "!this.lexicalAnalysis.check(ValidTokens.RPAREN)"
+                    
+                    Node e = E();
+                    c.addNode(e);
+                    
+                    if (!this.lexicalAnalysis.check(ValidTokens.COMMA)) {
+                        if (this.lexicalAnalysis.check(ValidTokens.RPAREN)){
+                            break;
+                        }
+                        throw new SyntaxException("Expected ',' or ')' in function parameter list. Line :" + this.lexicalAnalysis.currentToken.line);
+                    }
+                } 
+            }
+            return c;
+        }
+        return a;
     }
 
     /* 

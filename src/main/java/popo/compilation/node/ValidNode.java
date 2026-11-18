@@ -35,6 +35,8 @@ public class ValidNode {
         ValidTypes.put("LOOP", 24);
         ValidTypes.put("BREAK", 25);
         ValidTypes.put("FUNC", 26);
+        ValidTypes.put("CALL", 27);
+        ValidTypes.put("RETURN", 28);
     }
     public static final HashMap<ValidTokens, NodeInfo> OP = new HashMap<>(ValidTypes.size());
     static {
