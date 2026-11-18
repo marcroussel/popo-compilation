@@ -20,8 +20,33 @@ public class SyntaxAnalysis {
     }
 
     public Node F() {
-        Node nIns = I();
-        return nIns;
+        this.lexicalAnalysis.accept(ValidTokens.INT);
+        this.lexicalAnalysis.accept(ValidTokens.IDENT);
+        Node N = new Node(ValidNode.ValidTypes.get("FUNC"), this.lexicalAnalysis.lastToken.ident);
+        Node B = new Node(ValidNode.ValidTypes.get("BLOCK"));
+        N.addNode(B);
+        this.lexicalAnalysis.accept(ValidTokens.LPAREN);
+        
+        if (!this.lexicalAnalysis.check(ValidTokens.RPAREN)){
+            while (true){    // peut-être remplacre "true" par "!this.lexicalAnalysis.check(ValidTokens.RPAREN)"
+                this.lexicalAnalysis.accept(ValidTokens.INT);
+                this.lexicalAnalysis.accept(ValidTokens.IDENT);
+                
+                Node D = new Node(ValidNode.ValidTypes.get("DECLARATION"), this.lexicalAnalysis.lastToken.ident);
+                B.addNode(D);
+                
+                if (!this.lexicalAnalysis.check(ValidTokens.COMMA)) {
+                    if (this.lexicalAnalysis.check(ValidTokens.RPAREN)){
+                        break;
+                    }
+                    throw new SyntaxException("Expected ',' or ')' in function parameter list. Line :" + this.lexicalAnalysis.currentToken.line);
+                }
+            } 
+        }
+        
+        Node i = I();
+        N.addNode(i);
+        return N;
     }
 
     /* 
