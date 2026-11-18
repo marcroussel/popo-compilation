@@ -8,6 +8,7 @@ import popo.compilation.semanticAnalysis.SemanticAnalysis;
 public class CodeGenerator {
 
     public int nbLabel;
+    public int nb_break;
 
     public SemanticAnalysis semanticAnalysis;
 
@@ -37,6 +38,7 @@ public class CodeGenerator {
     public CodeGenerator(String sourceFileName) {
         this.semanticAnalysis = new SemanticAnalysis(sourceFileName);
         this.nbLabel = 0; // Initialisation du nombre de labels
+        this.nb_break = 0; // Initialisation du nombre de breaks
     }
 
     /* 
@@ -91,6 +93,9 @@ public class CodeGenerator {
                     break;
 
                 case 21: // SEQUENCE
+                    for (int i = 0; i < N.nbChildren; i++) {
+                        genNode(N.children.get(i));
+                    }
                     break;
 
                 case 23: // COND
@@ -123,6 +128,28 @@ public class CodeGenerator {
                         System.out.println("." + label);
                     }
 
+                    break;
+                
+                case 24: // LOOP
+                    int nb_b = nb_break++ ;
+                    int save = nb_break;
+                    nb_break = nb_b;
+                    
+                    System.out.println(".b" + nb_b + "\n");
+                    
+                    for (int i = 0; i < N.nbChildren; i++) {
+                        Node E = N.children.get(i);
+                        genNode(E);
+                    }
+
+                    System.out.println("jump b" + nb_b);
+                    System.out.println(".e" + nb_b);
+                    // Restauration de la sauvegarde
+                    nb_break = save;
+                    break;
+
+                case 25: // BREAK
+                    System.out.println("jump e" + nb_break);
                     break;
 
                 default : throw new CodeGenException("Unhandled node type: " + N.type);
